@@ -1,0 +1,28 @@
+.sidebar {
+    width: 250px;
+    background: #f4f4f4;
+    padding: 10px;
+    overflow-y: auto;
+  }
+  
+  .search {
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 10px;
+  }
+  
+  .collection {
+    font-weight: bold;
+    padding: 5px 0;
+  }
+  
+  .request {
+    padding-left: 10px;
+    cursor: pointer;
+    color: blue;
+  }
+  
+  .request:hover {
+    text-decoration: underline;
+  }
+  

@@ -1,0 +1,56 @@
+<div class="container">
+  <!-- Sidebar Component -->
+  <app-sidebar></app-sidebar>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="request-section">
+      <select class="method-select">
+        <option value="GET">GET</option>
+        <option value="POST">POST</option>
+        <option value="PUT">PUT</option>
+        <option value="DELETE">DELETE</option>
+      </select>
+      <input type="text" class="url-input" placeholder="http://example.com" />
+      <button class="send-button">Send</button>
+    </div>
+
+    <!-- Form to Create a New Request -->
+    <div class="create-request">
+      <h3>Create a New Request</h3>
+    </div>
+
+    <div class="headers-section">
+      <h3>Headers</h3>
+      <div class="header-inputs">
+        <input type="text" class="header-key" placeholder="Header" />
+        <input type="text" class="header-value" placeholder="Value" />
+        <button class="remove-header">X</button>
+      </div>
+      <button class="add-header">+</button>
+    </div>
+
+    <div class="body-section">
+      <h3>Request body</h3>
+      <textarea class="request-body" placeholder="Enter request body content"></textarea>
+    </div>
+
+    <div class="response-section">
+      <div class="response-meta">
+        <span class="status">200 OK</span>
+        <span class="time">523 ms</span>
+        <span class="size">8.74 KB</span>
+      </div>
+      <pre class="response-content">&lt;!-- Response will be displayed here --&gt;</pre>
+    </div>
+    <div class="collections">
+      <h3>Collections</h3>
+      <ul>
+        <li *ngFor="let collection of collections">
+          {{ collection.name }} (ID: {{ collection.id }})
+        </li>
+      </ul>
+    </div>
+    
+  </main>
+</div>

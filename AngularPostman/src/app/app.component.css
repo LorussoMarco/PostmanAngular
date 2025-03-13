@@ -1,0 +1,107 @@
+/* Global Styles */
+* {
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+  }
+  
+  /* Layout */
+  .container {
+    display: flex;
+    height: 100vh;
+  }
+  
+  /* Sidebar */
+  .sidebar {
+    width: 250px;
+    background: #f4f4f4;
+    padding: 10px;
+    overflow-y: auto;
+  }
+  
+  .search {
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 10px;
+  }
+  
+  .collection {
+    font-weight: bold;
+    padding: 5px 0;
+  }
+  
+  .request {
+    padding-left: 10px;
+    cursor: pointer;
+  }
+  
+  /* Main Content */
+  .main-content {
+    flex-grow: 1;
+    padding: 20px;
+  }
+  
+  .request-section {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .method-select, .url-input {
+    padding: 5px;
+  }
+  
+  .url-input {
+    flex-grow: 1;
+  }
+  
+  .send-button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  
+  /* Headers, Body, and Response Sections */
+  .headers-section, .body-section, .response-section {
+    margin-top: 20px;
+  }
+  
+  .header-inputs {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 5px;
+  }
+  
+  .header-key, .header-value {
+    flex: 1;
+    padding: 5px;
+  }
+  
+  .remove-header, .add-header {
+    padding: 5px;
+    cursor: pointer;
+  }
+  
+  .request-body {
+    width: 100%;
+    height: 100px;
+    padding: 5px;
+  }
+  
+  .response-section {
+    background: #eee;
+    padding: 10px;
+  }
+  
+  .response-meta {
+    display: flex;
+    gap: 10px;
+    font-weight: bold;
+  }
+  
+  .response-content {
+    background: white;
+    padding: 10px;
+    white-space: pre-wrap;
+  }

@@ -1,0 +1,57 @@
+# Node.js dependencies
+node_modules/
+package-lock.json
+yarn.lock
+
+# Angular build outputs
+dist/
+out-tsc/
+.angular/
+coverage/
+
+# IDE / Editor files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.log
+*.DS_Store
+Thumbs.db
+
+# Environment files
+src/environments/environment*.ts
+
+# Temporary files
+npm-debug.log*
+yarn-error.log
+lerna-debug.log
+.pnp
+.pnp.js
+
+# Angular Service Worker
+ngsw-config.json
+ngsw.json
+
+# Generated files
+*.generated.*
+*.cache
+*.bak
+*.tmp
+
+# TypeScript
+*.tsbuildinfo
+
+# Firebase / Deployment
+firebase.json
+.firebaserc
+.cypress/
+.cypress-cache/
+
+# macOS/Linux
+*.swp
+*.swo
+*.swn
+~*
