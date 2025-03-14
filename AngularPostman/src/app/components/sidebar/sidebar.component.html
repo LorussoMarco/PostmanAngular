@@ -1,14 +1,35 @@
 <div class="sidebar">
-  <input type="text" class="search" placeholder="Search">
-  <ul>
+  <h2 class="sidebar-title">Collections</h2>
+
+  <input type="text" class="search-bar" placeholder="Search requests..." [(ngModel)]="searchTerm">
+
+  <ul class="sidebar-list">
     <li *ngFor="let collection of collections">
-      <div class="collection"></div>
-      <ul *ngIf="collection.requests">
-        <li *ngFor="let request of collection.requests"  
-            class="request">
-          Ciao
+      <div class="collection-header">
+        <span (click)="loadRequests(collection.id)">
+          {{ collection.name }}
+          <span class="caret" [class.rotate]="expandedCollectionId === collection.id">▲</span>
+        </span>
+
+        <div class="menu-container">
+          <button class="menu-button" (click)="toggleMenu(collection.id, $event)">⋮</button>
+          <div class="menu-dropdown" *ngIf="menuOpenCollectionId === collection.id">
+            <button (click)="importCollection(collection.id)">Import</button>
+            <button (click)="exportCollection(collection.id)">Export</button>
+          </div>
+        </div>
+      </div>
+
+      <ul *ngIf="expandedCollectionId === collection.id" class="dropdown-list">
+        <li *ngFor="let request of filteredRequests(collection.requests)"
+            class="request-item"
+            (click)="selectRequest(request)">
+          <span class="request-method method-{{ request.method.toLowerCase() }}">
+            {{ request.method }}
+          </span>
+          {{ request.name }}
         </li>
       </ul>
-    </li>    
+    </li>
   </ul>
 </div>

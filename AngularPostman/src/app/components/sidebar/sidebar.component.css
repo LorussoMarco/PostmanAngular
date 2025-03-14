@@ -1,28 +1,156 @@
+/* --- Sidebar Styles --- */
 .sidebar {
-    width: 250px;
-    background: #f4f4f4;
-    padding: 10px;
-    overflow-y: auto;
-  }
-  
-  .search {
-    width: 100%;
-    padding: 5px;
-    margin-bottom: 10px;
-  }
-  
-  .collection {
-    font-weight: bold;
-    padding: 5px 0;
-  }
-  
-  .request {
-    padding-left: 10px;
-    cursor: pointer;
-    color: blue;
-  }
-  
-  .request:hover {
-    text-decoration: underline;
-  }
-  
+  width: 250px;
+  height: 100vh;
+  background: #f4f4f4;
+  padding: 15px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+}
+
+/* --- Barra di Ricerca --- */
+.search-bar {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* --- Sidebar Title --- */
+.sidebar-title {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  text-align: center;
+  color: #333;
+}
+
+
+/* --- Collection Header (Clickable) --- */
+.collection-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ddd;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+
+.collection-header:hover {
+  background: #ccc;
+
+
+/* --- Menu a 3 PUNTINI --- */
+.menu-container {
+  position: relative;
+}
+
+.menu-button {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.menu-dropdown {
+  position: absolute;
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-dropdown button {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+}
+
+.menu-dropdown button:hover {
+  background: #ddd;
+}}
+
+/* --- Caret Rotation for Open Dropdown --- */
+.caret {
+  transition: transform 0.3s ease;
+}
+
+.caret.rotate {
+  transform: rotate(180deg);
+}
+
+/* --- Dropdown List --- */
+.dropdown-list {
+  list-style-type: none;
+  padding: 5px;
+  margin: 5px 0 0;
+  background: #f1f1f1;
+  border-radius: 5px;
+  border-left: 3px solid #ccc;
+}
+
+.dropdown-list li {
+  padding: 10px;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.3s ease;
+}
+
+.dropdown-list li:hover {
+  background: #e0e0e0;
+}
+/* Rimuove i puntini della lista */
+.sidebar-list, .dropdown-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Stile per le voci di richiesta */
+.request-item {
+  padding: 8px;
+  margin: 4px 0;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+}
+
+/* Stili per i metodi HTTP */
+.request-method {
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-weight: bold;
+  color: white;
+  margin-right: 10px;
+}
+
+/* Colori per i diversi metodi */
+.method-delete {
+  background-color: red;
+}
+
+.method-post {
+  background-color: green;
+}
+
+.method-put {
+  background-color: orange;
+}
+
+.method-get {
+  background-color: blue;
+}
