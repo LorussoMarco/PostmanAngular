@@ -27,6 +27,7 @@ export class AppComponent implements OnInit {
   responseStatus: string = '';
   responseTime: number = 0;
   responseSize: number = 0;
+  responseType: string = '';
 
   constructor(private httpService: HttpClientService) {}
 
@@ -52,12 +53,6 @@ export class AppComponent implements OnInit {
     for (const key in this.selectedRequest.headers) {
       headers.append(key, this.selectedRequest.headers[key]);
     }
-
-    let options = {
-      headers: headers,
-      observe: 'response' as 'body',
-      responseType: 'json' as 'json'
-    };
 
     let requestObservable;
 
@@ -89,9 +84,23 @@ export class AppComponent implements OnInit {
     const endTime = performance.now();
     this.responseStatus = `${response.status} ${response.statusText}`;
     this.responseTime = Math.round(endTime - startTime);
-    this.responseSize = JSON.stringify(response.body).length / 1024; // Convertito in KB
-    this.responseData = response.body;
-  }
+    this.responseSize = JSON.stringify(response.body)?.length / 1024; 
+
+    const contentType = response.headers.get('Content-Type') || 'text/plain';
+    this.responseType = contentType;
+
+    if (contentType.includes('application/json')) {
+        this.responseData = response.body;
+    } else if (contentType.includes('text/html')) {
+        this.responseData = response.body;
+    } else if (contentType.includes('image')) {
+        const blob = new Blob([response.body], { type: contentType });
+        this.responseData = URL.createObjectURL(blob);
+    } else {
+        this.responseData = response.body;
+    }
+}
+
 
   private handleError(error: any) {
     this.responseData = error.error ? JSON.stringify(error.error) : 'Errore sconosciuto';

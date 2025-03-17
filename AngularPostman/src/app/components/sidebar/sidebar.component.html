@@ -1,6 +1,9 @@
 <div class="sidebar">
   <h2 class="sidebar-title">Collections</h2>
 
+  <button (click)="triggerFileInput()">Import</button>
+  <input type="file" (change)="importCollection($event)" style="display: none;">
+  
   <input type="text" class="search-bar" placeholder="Search requests..." [(ngModel)]="searchTerm">
 
   <ul class="sidebar-list">
@@ -8,19 +11,18 @@
       <div class="collection-header">
         <span (click)="loadRequests(collection.id)">
           {{ collection.name }}
-          <span class="caret" [class.rotate]="expandedCollectionId === collection.id">▲</span>
+          <span class="caret" [class.rotate]="expandedCollections[collection.id]">▲</span>
         </span>
 
         <div class="menu-container">
           <button class="menu-button" (click)="toggleMenu(collection.id, $event)">⋮</button>
           <div class="menu-dropdown" *ngIf="menuOpenCollectionId === collection.id">
-            <button (click)="importCollection(collection.id)">Import</button>
             <button (click)="exportCollection(collection.id)">Export</button>
           </div>
         </div>
       </div>
 
-      <ul *ngIf="expandedCollectionId === collection.id" class="dropdown-list">
+      <ul *ngIf="expandedCollections[collection.id]" class="dropdown-list">
         <li *ngFor="let request of filteredRequests(collection.requests)"
             class="request-item"
             (click)="selectRequest(request)">
@@ -28,6 +30,7 @@
             {{ request.method }}
           </span>
           {{ request.name }}
+          <button class="delete-button" (click)="deleteRequest(request)">🗑️</button>
         </li>
       </ul>
     </li>

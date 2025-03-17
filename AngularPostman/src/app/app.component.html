@@ -38,7 +38,23 @@
         <span class="time">Time: {{ responseTime }} ms</span>
         <span class="size">Size: {{ responseSize | number: '1.2-2' }} KB</span>
       </div>
-      <pre class="response-content">{{ responseData | json }}</pre>
+    
+      <div class="response-content">
+        <!-- 🟢 JSON -->
+        <pre *ngIf="responseType.includes('application/json')">{{ responseData | json }}</pre>
+      
+        <!-- 🟢 HTML -->
+        <iframe *ngIf="responseType.includes('text/html')" [srcdoc]="responseData" class="html-preview"></iframe>
+      
+        <!-- 🟢 Immagini -->
+        <img *ngIf="responseType.includes('image')" [src]="responseData" class="image-preview" />
+      
+        <!-- 🟢 Testo semplice -->
+        <pre *ngIf="!responseType.includes('application/json') && !responseType.includes('text/html') && !responseType.includes('image')">
+          {{ responseData }}
+        </pre>
+      </div>
     </div>
+  
   </main>
 </div>

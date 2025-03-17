@@ -154,3 +154,12 @@
 .method-get {
   background-color: blue;
 }
+
+.delete-button {
+  background-color: red;
+  color: gray;
+  border: none;
+  padding: 5px;
+  margin-left: 5px;
+  cursor: pointer;
+}

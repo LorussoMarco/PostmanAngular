@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class HttpClientService {
   private baseUrl = 'https://supsi-ticket.cloudns.org/supsi-http-client/bff';
-  private apiKey = 'lorusso1'; // Cambia con la tua apiKey
+  private apiKey = 'lorusso1';
 
   constructor(private http: HttpClient) {}
 
@@ -40,12 +40,13 @@ export class HttpClientService {
       params: { apiKey: this.apiKey }
     });
   }
+  
   fetchRequest(url: string, method: string, body: any = null, headers: any = {}): Observable<any> {
     const httpOptions = {
       headers: new HttpHeaders(headers),
       observe: 'response' as 'body',
-      responseType: 'json' as 'json',
-      params: new HttpParams().set('apiKey', this.apiKey) // Aggiunge la API Key
+      responseType: 'blob' as 'json',
+      params: new HttpParams().set('apiKey', this.apiKey) 
     };
 
     switch (method.toUpperCase()) {

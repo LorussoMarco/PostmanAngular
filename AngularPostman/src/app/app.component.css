@@ -92,6 +92,8 @@
   .response-section {
     background: #eee;
     padding: 10px;
+    max-width: 100%;
+    overflow: hidden;
   }
   
   .response-meta {
@@ -101,7 +103,14 @@
   }
   
   .response-content {
-    background: white;
+    background: #ffffff;
     padding: 10px;
-    white-space: pre-wrap;
-  }
+    border-radius: 5px;
+    white-space: pre-wrap; /* Permette il word-wrap */
+    word-wrap: break-word; /* Forza il testo ad andare a capo */
+    overflow-wrap: break-word; /* Per maggiore compatibilità */
+    max-width: 100%;
+    max-height: 400px; /* Altezza massima per evitare scroll infiniti */
+    overflow-x: hidden; /* Impedisce lo scroll orizzontale */
+    overflow-y: auto; /* Permette lo scroll verticale */
+}
