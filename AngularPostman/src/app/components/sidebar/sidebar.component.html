@@ -4,7 +4,7 @@
   <button (click)="triggerFileInput()">Import</button>
   <input type="file" (change)="importCollection($event)" style="display: none;">
   
-  <input type="text" class="search-bar" placeholder="Search requests..." [(ngModel)]="searchTerm">
+  <input *ngIf="showSearch" type="text" class="search-bar" placeholder="Search requests..." [(ngModel)]="searchTerm">
 
   <ul class="sidebar-list">
     <li *ngFor="let collection of collections">

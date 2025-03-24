@@ -11,6 +11,12 @@ export class HttpClientService {
 
   constructor(private http: HttpClient) {}
 
+  setBaseUrl(url: string) {
+    if (url) {
+      this.baseUrl = url.endsWith('/') ? url.slice(0, -1) : url;
+    }
+  }
+
   getCollections(): Observable<any> {
     return this.http.get(`${this.baseUrl}/collections`);
   }

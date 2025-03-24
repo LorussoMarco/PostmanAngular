@@ -1,60 +1,52 @@
-<div class="container">
-  <!-- Sidebar Component -->
-  <app-sidebar [collections]="collections" (requestSelected)="handleRequestSelection($event)"></app-sidebar>
+<div class="app-container">
+  <h1 class="app-title">{{ title }}</h1>
 
-  <!-- Main Content -->
-  <main class="main-content">
-    <div class="request-section">
-      <select class="method-select" [(ngModel)]="selectedRequest.method">
-        <option value="GET">GET</option>
-        <option value="POST">POST</option>
-        <option value="PUT">PUT</option>
-        <option value="DELETE">DELETE</option>
-      </select>
-      <input type="text" class="url-input" placeholder="http://example.com" [(ngModel)]="selectedRequest.uri" />
-      <button class="send-button" (click)="sendRequest()">Send</button>
-    </div>
+  <!-- Use the new HttpClient component -->
+  <app-http-client 
+    url="https://supsi-ticket.cloudns.org/supsi-http-client/bff"
+    [search]="true"
+    [collections]="true"
+    (onResponseMessageClick)="handleResponseMessageClick($event)">
+  </app-http-client>
 
-    <!-- Request Body Section -->
-    <div class="body-section">
-      <h3>Request Body</h3>
-      <textarea class="request-body" [(ngModel)]="selectedRequest.body" placeholder="Inserisci il JSON del body"></textarea>
-    </div>
+  <!-- Response Details Display -->
+  <div *ngIf="responseDetails" class="response-details-overlay">
+    <div class="response-details-modal">
+      <h2>Response Details</h2>
+      <button class="close-button" (click)="responseDetails = null">✕</button>
+      
+      <div class="details-section">
+        <h3>Status</h3>
+        <p>{{ responseDetails.status }}</p>
+      </div>
 
-    <!-- Headers Section -->
-    <div class="headers-section">
-      <h3>Headers</h3>
-      <div *ngFor="let header of selectedRequest.headers | keyvalue" class="header-inputs">
-        <input type="text" class="header-key" [value]="header.key" readonly />
-        <input type="text" class="header-value" [value]="header.value" readonly />
+      <div class="details-section">
+        <h3>Response Time</h3>
+        <p>{{ responseDetails.time }} ms</p>
+      </div>
+
+      <div class="details-section">
+        <h3>Size</h3>
+        <p>{{ responseDetails.size | number: '1.2-2' }} KB</p>
+      </div>
+
+      <div class="details-section">
+        <h3>Content Type</h3>
+        <p>{{ responseDetails.type }}</p>
+      </div>
+
+      <div class="details-section">
+        <h3>Headers</h3>
+        <div *ngFor="let header of responseDetails.headers | keyvalue">
+          <strong>{{ header.key }}:</strong> {{ header.value }}
+        </div>
+      </div>
+
+      <div class="details-section">
+        <h3>Body</h3>
+        <pre>{{ responseDetails.data | json }}</pre>
       </div>
     </div>
-
-    <!-- Response Section -->
-    <div class="response-section">
-      <h3>Response</h3>
-      <div class="response-meta">
-        <span class="status">Status: {{ responseStatus }}</span>
-        <span class="time">Time: {{ responseTime }} ms</span>
-        <span class="size">Size: {{ responseSize | number: '1.2-2' }} KB</span>
-      </div>
-    
-      <div class="response-content">
-        <!-- 🟢 JSON -->
-        <pre *ngIf="responseType.includes('application/json')">{{ responseData | json }}</pre>
-      
-        <!-- 🟢 HTML -->
-        <iframe *ngIf="responseType.includes('text/html')" [srcdoc]="responseData" class="html-preview"></iframe>
-      
-        <!-- 🟢 Immagini -->
-        <img *ngIf="responseType.includes('image')" [src]="responseData" class="image-preview" />
-      
-        <!-- 🟢 Testo semplice -->
-        <pre *ngIf="!responseType.includes('application/json') && !responseType.includes('text/html') && !responseType.includes('image')">
-          {{ responseData }}
-        </pre>
-      </div>
-    </div>
-  
-  </main>
+  </div>
 </div>
+

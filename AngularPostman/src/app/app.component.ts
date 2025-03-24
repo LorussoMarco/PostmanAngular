@@ -1,129 +1,22 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { SidebarComponent } from './components/sidebar/sidebar.component';
-import { FormsModule } from '@angular/forms';
-import { HttpClientService } from './services/http-client.service';
+import { HttpClientComponent } from './components/http-client/http-client.component';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, SidebarComponent, FormsModule, CommonModule],
+  imports: [RouterOutlet, HttpClientComponent, CommonModule],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   title = 'AngularPostman';
-  collections: any[] = [];
+  responseDetails: any = null;
 
-  selectedRequest: any = {
-    uri: '',
-    method: 'GET',
-    headers: {},
-    body: ''
-  };
-
-  responseData: any = null;
-  responseStatus: string = '';
-  responseTime: number = 0;
-  responseSize: number = 0;
-  responseType: string = '';
-
-  constructor(private httpService: HttpClientService) {}
-
-  ngOnInit() {
-    this.loadCollections();
-  }
-
-  loadCollections() {
-    this.httpService.getCollections().subscribe(
-      (data) => this.collections = data,
-      (error) => console.error('Errore nel recupero delle collections:', error)
-    );
-  }
-
-  sendRequest() {
-    if (!this.selectedRequest.uri || !this.selectedRequest.method) {
-      console.error("URL o Metodo non validi!");
-      return;
-    }
-
-    const startTime = performance.now();
-    let headers = new Headers();
-    for (const key in this.selectedRequest.headers) {
-      headers.append(key, this.selectedRequest.headers[key]);
-    }
-
-    let requestObservable;
-
-    switch (this.selectedRequest.method.toUpperCase()) {
-      case 'GET':
-        requestObservable = this.httpService.fetchRequest(this.selectedRequest.uri, 'GET', null, headers);
-        break;
-      case 'POST':
-        requestObservable = this.httpService.fetchRequest(this.selectedRequest.uri, 'POST', this.parseRequestBody(), headers);
-        break;
-      case 'PUT':
-        requestObservable = this.httpService.fetchRequest(this.selectedRequest.uri, 'PUT', this.parseRequestBody(), headers);
-        break;
-      case 'DELETE':
-        requestObservable = this.httpService.fetchRequest(this.selectedRequest.uri, 'DELETE', null, headers);
-        break;
-      default:
-        console.error("Metodo HTTP non supportato:", this.selectedRequest.method);
-        return;
-    }
-
-    requestObservable.subscribe(
-      (response: any) => this.handleResponse(response, startTime),
-      (error: any) => this.handleError(error)
-    );
-  }
-
-  handleResponse(response: any, startTime: number) {
-    const endTime = performance.now();
-    this.responseStatus = `${response.status} ${response.statusText}`;
-    this.responseTime = Math.round(endTime - startTime);
-    this.responseSize = JSON.stringify(response.body)?.length / 1024; 
-
-    const contentType = response.headers.get('Content-Type') || 'text/plain';
-    this.responseType = contentType;
-
-    if (contentType.includes('application/json')) {
-        this.responseData = response.body;
-    } else if (contentType.includes('text/html')) {
-        this.responseData = response.body;
-    } else if (contentType.includes('image')) {
-        const blob = new Blob([response.body], { type: contentType });
-        this.responseData = URL.createObjectURL(blob);
-    } else {
-        this.responseData = response.body;
-    }
-}
-
-
-  private handleError(error: any) {
-    this.responseData = error.error ? JSON.stringify(error.error) : 'Errore sconosciuto';
-    this.responseStatus = `${error.status} ${error.statusText}`;
-    this.responseTime = 0;
-    this.responseSize = 0;
-  }
-
-  private parseRequestBody(): any {
-    try {
-      return JSON.parse(this.selectedRequest.body);
-    } catch (error) {
-      alert('Formato JSON non valido nel corpo della richiesta.');
-      return {};
-    }
-  }
-
-  handleRequestSelection(request: any) {
-    this.selectedRequest = {
-      uri: request.uri || '',
-      method: request.method || 'GET',
-      headers: request.headers || {},
-      body: request.body || ''
-    };
+  handleResponseMessageClick(response: any) {
+    this.responseDetails = response;
+    // In a real application, you might show a modal or other UI element
+    console.log('Response clicked:', response);
   }
 }

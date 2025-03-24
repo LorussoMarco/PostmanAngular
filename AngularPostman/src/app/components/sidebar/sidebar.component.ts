@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class SidebarComponent implements OnInit {
   @Input() collections: any[] = [];
+  @Input() showSearch: boolean = true;
   searchTerm: string = '';
   expandedCollections: Record<number, boolean> = {}; 
   menuOpenCollectionId: number | null = null;

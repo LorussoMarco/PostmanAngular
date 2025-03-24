@@ -1,0 +1,64 @@
+<div class="container">
+  <!-- Sidebar Component - conditionally included based on collections property -->
+  <app-sidebar 
+    *ngIf="collections" 
+    [collections]="collectionsList" 
+    (requestSelected)="handleRequestSelection($event)"
+    [showSearch]="search">
+  </app-sidebar>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="request-section">
+      <select class="method-select" [(ngModel)]="selectedRequest.method">
+        <option value="GET">GET</option>
+        <option value="POST">POST</option>
+        <option value="PUT">PUT</option>
+        <option value="DELETE">DELETE</option>
+      </select>
+      <input type="text" class="url-input" placeholder="http://example.com" [(ngModel)]="selectedRequest.uri" />
+      <button class="send-button" (click)="sendRequest()">Send</button>
+    </div>
+
+    <!-- Request Body Section -->
+    <div class="body-section">
+      <h3>Request Body</h3>
+      <textarea class="request-body" [(ngModel)]="selectedRequest.body" placeholder="Enter JSON body"></textarea>
+    </div>
+
+    <!-- Headers Section -->
+    <div class="headers-section">
+      <h3>Headers</h3>
+      <div *ngFor="let header of selectedRequest.headers | keyvalue" class="header-inputs">
+        <input type="text" class="header-key" [value]="header.key" readonly />
+        <input type="text" class="header-value" [value]="header.value" readonly />
+      </div>
+    </div>
+
+    <!-- Response Section - Clickable to trigger event -->
+    <div class="response-section" (click)="handleResponseClick()">
+      <h3>Response <small>(click to view details)</small></h3>
+      <div class="response-meta">
+        <span class="status">Status: {{ responseStatus }}</span>
+        <span class="time">Time: {{ responseTime }} ms</span>
+        <span class="size">Size: {{ responseSize | number: '1.2-2' }} KB</span>
+      </div>
+    
+      <div class="response-content">
+        <!-- JSON -->
+        <pre *ngIf="responseType.includes('application/json')">{{ responseData | json }}</pre>
+      
+        <!-- HTML -->
+        <iframe *ngIf="responseType.includes('text/html')" [srcdoc]="responseData" class="html-preview"></iframe>
+      
+        <!-- Images -->
+        <img *ngIf="responseType.includes('image')" [src]="responseData" class="image-preview" />
+      
+        <!-- Plain text -->
+        <pre *ngIf="!responseType.includes('application/json') && !responseType.includes('text/html') && !responseType.includes('image')">
+          {{ responseData }}
+        </pre>
+      </div>
+    </div>
+  </main>
+</div> 
