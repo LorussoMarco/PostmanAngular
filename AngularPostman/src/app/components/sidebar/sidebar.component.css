@@ -1,165 +1,187 @@
 /* --- Sidebar Styles --- */
-.sidebar {
-  width: 250px;
-  height: 100vh;
-  background: #f4f4f4;
-  padding: 15px;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+.sidebar-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background-color: #f5f5f5;
+  border-right: 1px solid #ddd;
   overflow-y: auto;
 }
 
-/* --- Barra di Ricerca --- */
-.search-bar {
+.search-container {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.search-input {
   width: 100%;
   padding: 8px;
-  margin-bottom: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  font-size: 14px;
 }
 
-/* --- Sidebar Title --- */
-.sidebar-title {
-  font-size: 22px;
-  font-weight: bold;
-  margin-bottom: 15px;
-  text-align: center;
-  color: #333;
+.collections-container {
+  flex: 1;
+  overflow-y: auto;
 }
 
+.collection-item {
+  margin-bottom: 5px;
+}
 
-/* --- Collection Header (Clickable) --- */
 .collection-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #ddd;
-  padding: 10px;
-  border-radius: 5px;
+  padding: 8px 10px;
+  background-color: #e9e9e9;
   cursor: pointer;
-  transition: background 0.3s ease;
+  border-radius: 4px;
+  margin: 4px;
 }
-
 
 .collection-header:hover {
-  background: #ccc;
-
-
-/* --- Menu a 3 PUNTINI --- */
-.menu-container {
-  position: relative;
+  background-color: #e0e0e0;
 }
 
-.menu-button {
-  background: none;
-  border: none;
-  font-size: 18px;
-  cursor: pointer;
+.collection-name {
+  font-weight: 500;
+  flex: 1;
 }
 
-.menu-dropdown {
-  position: absolute;
-  right: 0;
-  background: white;
-  border: 1px solid #ccc;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+.collection-actions {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  gap: 5px;
 }
 
-.menu-dropdown button {
-  background: none;
-  border: none;
-  padding: 8px;
-  cursor: pointer;
-  width: 100%;
-  text-align: left;
+.requests-container {
+  padding-left: 20px;
 }
 
-.menu-dropdown button:hover {
-  background: #ddd;
-}}
-
-/* --- Caret Rotation for Open Dropdown --- */
-.caret {
-  transition: transform 0.3s ease;
-}
-
-.caret.rotate {
-  transform: rotate(180deg);
-}
-
-/* --- Dropdown List --- */
-.dropdown-list {
-  list-style-type: none;
-  padding: 5px;
-  margin: 5px 0 0;
-  background: #f1f1f1;
-  border-radius: 5px;
-  border-left: 3px solid #ccc;
-}
-
-.dropdown-list li {
-  padding: 10px;
-  font-size: 14px;
-  color: #333;
-  cursor: pointer;
+.request-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: background 0.3s ease;
+  padding: 6px 10px;
+  margin: 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: #f9f9f9;
 }
 
-.dropdown-list li:hover {
-  background: #e0e0e0;
-}
-/* Rimuove i puntini della lista */
-.sidebar-list, .dropdown-list {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
+.request-item:hover {
+  background-color: #eaeaea;
 }
 
-/* Stile per le voci di richiesta */
-.request-item {
-  padding: 8px;
-  margin: 4px 0;
-  border-radius: 5px;
+.request-info {
   display: flex;
   align-items: center;
-  font-weight: bold;
+  gap: 8px;
+  flex: 1;
 }
 
-/* Stili per i metodi HTTP */
-.request-method {
-  padding: 5px 10px;
-  border-radius: 5px;
+.method {
+  padding: 2px 5px;
+  border-radius: 3px;
+  font-size: 11px;
   font-weight: bold;
   color: white;
-  margin-right: 10px;
+  min-width: 40px;
+  text-align: center;
 }
 
-/* Colori per i diversi metodi */
-.method-delete {
-  background-color: red;
+.get {
+  background-color: #61affe;
 }
 
-.method-post {
-  background-color: green;
+.post {
+  background-color: #49cc90;
 }
 
-.method-put {
-  background-color: orange;
+.put {
+  background-color: #fca130;
 }
 
-.method-get {
-  background-color: blue;
+.delete {
+  background-color: #f93e3e;
 }
 
-.delete-button {
-  background-color: red;
-  color: gray;
-  border: none;
-  padding: 5px;
-  margin-left: 5px;
+.patch {
+  background-color: #50e3c2;
+}
+
+.request-name {
+  font-size: 14px;
+}
+
+.sidebar-footer {
+  padding: 10px;
+  border-top: 1px solid #ddd;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.icon-image {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+.import-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 6px 12px;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.3s;
+  width: auto;
+  max-width: 150px;
+  margin: 0 auto;
+}
+
+.import-button:hover {
+  background-color: #e5e5e5;
+}
+
+.add-button {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.add-button:hover {
+  background-color: #45a049;
+}
+
+.export-button, .delete-button {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+}
+
+.export-button:hover, .delete-button:hover {
+  background-color: rgba(0, 0, 0, 0.1);
 }

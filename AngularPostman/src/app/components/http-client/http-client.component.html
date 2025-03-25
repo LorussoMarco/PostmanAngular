@@ -9,6 +9,15 @@
 
   <!-- Main Content -->
   <main class="main-content">
+    <!-- Collection Selection -->
+    <div class="collection-section" *ngIf="collections">
+      <h3>Collection</h3>
+      <select [(ngModel)]="selectedCollectionId" class="collection-select">
+        <option [ngValue]="null">Select a collection</option>
+        <option *ngFor="let collection of collectionsList" [value]="collection.id">{{ collection.name }}</option>
+      </select>
+    </div>
+    
     <div class="request-section">
       <select class="method-select" [(ngModel)]="selectedRequest.method">
         <option value="GET">GET</option>
@@ -20,6 +29,12 @@
       <button class="send-button" (click)="sendRequest()">Send</button>
     </div>
 
+    <!-- Request Name (visibile solo per salvare in collection) -->
+    <div class="name-section" *ngIf="selectedCollectionId">
+      <h3>Request Name</h3>
+      <input type="text" class="name-input" placeholder="My Request" [(ngModel)]="selectedRequest.name" />
+    </div>
+
     <!-- Request Body Section -->
     <div class="body-section">
       <h3>Request Body</h3>
@@ -28,11 +43,39 @@
 
     <!-- Headers Section -->
     <div class="headers-section">
-      <h3>Headers</h3>
-      <div *ngFor="let header of selectedRequest.headers | keyvalue" class="header-inputs">
-        <input type="text" class="header-key" [value]="header.key" readonly />
-        <input type="text" class="header-value" [value]="header.value" readonly />
+      <div class="headers-title-container">
+        <h3>Headers</h3>
+        <button class="add-header-button" (click)="addHeader()">+</button>
       </div>
+      
+      <div class="headers-table">
+        <div class="headers-table-header">
+          <div class="header-key-column">Key</div>
+          <div class="header-value-column">Value</div>
+          <div class="header-actions-column">Actions</div>
+        </div>
+        
+        <div *ngFor="let header of headersArray; let i = index" class="header-inputs">
+          <input type="text" class="header-key" 
+                 [(ngModel)]="header.key" 
+                 placeholder="Header name" />
+          <input type="text" class="header-value" 
+                 [(ngModel)]="header.value"
+                 placeholder="Header value" />
+          <div class="header-actions">
+            <button class="remove-header" (click)="removeHeader(i)" title="Remove header">🗑️</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons" *ngIf="selectedCollectionId">
+      <button class="save-button" (click)="saveRequest()">
+        {{ isEditMode ? 'Update Request' : 'Save to Collection' }}
+      </button>
+      <button *ngIf="isEditMode" class="cancel-button" (click)="cancelEdit()">Cancel</button>
+      <button class="debug-button" (click)="logHeaders()">Debug</button>
     </div>
 
     <!-- Response Section - Clickable to trigger event -->
@@ -51,11 +94,21 @@
         <!-- HTML -->
         <iframe *ngIf="responseType.includes('text/html')" [srcdoc]="responseData" class="html-preview"></iframe>
       
+        <!-- PDF -->
+        <div *ngIf="responseType.includes('application/pdf')" class="pdf-container">
+          <iframe *ngIf="safePdfUrl" [src]="safePdfUrl" class="pdf-preview" 
+                  frameborder="0" allowfullscreen></iframe>
+          
+          <div *ngIf="!safePdfUrl" class="pdf-fallback">
+            <p>Per visualizzare il PDF, <a [href]="responseData" target="_blank">clicca qui per aprire in una nuova finestra</a></p>
+          </div>
+        </div>
+      
         <!-- Images -->
         <img *ngIf="responseType.includes('image')" [src]="responseData" class="image-preview" />
       
         <!-- Plain text -->
-        <pre *ngIf="!responseType.includes('application/json') && !responseType.includes('text/html') && !responseType.includes('image')">
+        <pre *ngIf="!responseType.includes('application/json') && !responseType.includes('text/html') && !responseType.includes('image') && !responseType.includes('application/pdf')">
           {{ responseData }}
         </pre>
       </div>
