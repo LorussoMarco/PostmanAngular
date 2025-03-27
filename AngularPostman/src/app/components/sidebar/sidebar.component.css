@@ -107,7 +107,6 @@ h3 {
 }
 
 .request-item {
-.request-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -189,17 +188,18 @@ h3 {
 }
 
 .sidebar-footer {
-  padding: 1rem;
+  padding: 0.75rem;
   background-color: var(--bg-color);
   display: flex;
   justify-content: center;
   width: 100%;
   border-top: 1px solid var(--border-color);
+  margin-top: auto;
 }
 
 .icon-image {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   object-fit: contain;
   opacity: 0.8;
   transition: opacity var(--transition-normal) ease;
@@ -210,7 +210,7 @@ h3 {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.75rem 1.25rem;
+  padding: 0.5rem 0.75rem;
   background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
   color: white;
   border: none;
@@ -220,6 +220,9 @@ h3 {
   background-size: 200% auto;
   font-weight: 500;
   box-shadow: var(--shadow-sm);
+  font-size: 0.875rem;
+  max-width: 150px;
+  width: 100%;
 }
 
 .import-button:hover {
@@ -250,52 +253,51 @@ h3 {
 
 .add-button:hover {
   background-color: var(--secondary-dark);
-  transform: rotate(90deg);
+  transform: scale(1.15);
   box-shadow: var(--shadow-md);
 }
 
 .export-button, .delete-button {
-  background: none;
-  border: none;
-  padding: 0.25rem;
-  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--bg-color);
+  border: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 26px;
-  height: 26px;
-  border-radius: var(--border-radius-full);
+  cursor: pointer;
   transition: all var(--transition-normal) ease;
-  background-color: rgba(255, 255, 255, 0.5);
+  padding: 0;
+  opacity: 0.7;
 }
 
 .export-button:hover {
-  background-color: var(--get-color);
-  transform: translateY(-2px);
+  background-color: var(--active-bg);
+  opacity: 1;
 }
 
 .delete-button:hover {
-  background-color: var(--error-color);
-  transform: scale(1.1);
+  background-color: var(--delete-light);
+  opacity: 1;
 }
 
 .export-button:hover .icon-image,
 .delete-button:hover .icon-image {
-  filter: brightness(10);
   opacity: 1;
+  transform: scale(1.1);
 }
 
-/* Animation for the collection expansion */
 @keyframes expandCollapse {
   from {
     opacity: 0;
-    transform: translateY(-10px);
-    max-height: 0;
+    transform: scaleY(0);
+    transform-origin: top;
   }
   to {
     opacity: 1;
-    transform: translateY(0);
-    max-height: 1000px;
+    transform: scaleY(1);
+    transform-origin: top;
   }
 }
 

@@ -27,12 +27,8 @@ export class HttpClientComponent implements OnInit {
   collectionsList: any[] = [];
   selectedCollectionId: number | null = null;
   isEditMode: boolean = false;
-  selectedCollectionId: number | null = null;
-  isEditMode: boolean = false;
   
   selectedRequest: any = {
-    id: null,
-    name: 'New Request',
     id: null,
     name: 'New Request',
     uri: '',
@@ -128,7 +124,6 @@ export class HttpClientComponent implements OnInit {
       this.loadCollections();
     }
     this.updateHeadersArray();
-    this.updateHeadersArray();
   }
 
   loadCollections() {
@@ -151,10 +146,6 @@ export class HttpClientComponent implements OnInit {
 
     const startTime = performance.now();
     let headers = new Headers();
-    for (const header of this.headersArray) {
-      if (header.key && header.key.trim() !== '') {
-        headers.append(header.key, header.value || '');
-      }
     for (const header of this.headersArray) {
       if (header.key && header.key.trim() !== '') {
         headers.append(header.key, header.value || '');
@@ -246,14 +237,6 @@ export class HttpClientComponent implements OnInit {
     this.responseTime = 0;
     this.responseSize = 0;
     this.safePdfUrl = null;
-    this.safePdfUrl = null;
-    
-    this.emitResponseClick({
-      status: error.status,
-      statusText: error.statusText,
-      error: error.error,
-      headers: error.headers
-    });
   }
 
   private parseRequestBody(): any {
@@ -266,16 +249,16 @@ export class HttpClientComponent implements OnInit {
   }
 
   handleResponseClick() {
-    const responseObject = {
+    if (!this.responseData) return;
+    
+    this.emitResponseClick({
       status: this.responseStatus,
       time: this.responseTime,
       size: this.responseSize,
       type: this.responseType,
       data: this.responseData,
       headers: {}
-    };
-
-    this.emitResponseClick(responseObject);
+    });
   }
 
   private emitResponseClick(response: any) {
@@ -283,93 +266,49 @@ export class HttpClientComponent implements OnInit {
   }
   
   saveRequest() {
-    if (!this.selectedCollectionId) {
-      alert('Please select a collection first');
+    // Ensure we have all required data
+    if (!this.selectedRequest.name || !this.url) {
+      this.error = 'Name and URL are required';
       return;
     }
-
-    if (!this.url || !this.selectedRequest.method) {
-      alert('Request URL and method are required');
-      return;
-    }
-
-    if (!this.selectedRequest.name) {
-      alert('Request name is required');
-      return;
-    }
-
+    
+    // Update request data from form
+    this.selectedRequest.uri = this.url;
+    this.selectedRequest.method = this.method;
     this.syncHeadersToRequest();
     
-    this.selectedRequest.uri = this.url;
+    if (this.selectedCollectionId) {
+      this.selectedRequest.collectionId = this.selectedCollectionId;
+    }
     
-    console.log('Original selected request:', JSON.parse(JSON.stringify(this.selectedRequest)));
-
     if (this.isEditMode && this.selectedRequest.id) {
-      console.log('Updating request ID:', this.selectedRequest.id);
-      
-      const requestToUpdate = {
-        name: this.selectedRequest.name,
-        uri: this.selectedRequest.uri,
-        method: this.selectedRequest.method,
-        headers: this.selectedRequest.headers,
-        body: this.selectedRequest.body || '',
-        collectionId: this.selectedCollectionId
-      };
-      
-      console.log('Request to update (complete):', requestToUpdate);
-      
-      this.httpService.updateRequest(String(this.selectedRequest.id), requestToUpdate).subscribe(
-        (response) => {
-          console.log('Update response:', response);
-          alert('Request updated successfully');
-          this.onRequestSaved.emit(response);
+      this.httpService.updateRequest(this.selectedRequest.id.toString(), this.selectedRequest).subscribe(
+        (updatedRequest) => {
+          console.log('Request updated successfully', updatedRequest);
+          this.onRequestSaved.emit(updatedRequest);
           this.refreshCollectionRequests();
         },
         (error) => {
           console.error('Error updating request:', error);
-          
-          let errorMessage = 'Unknown error';
-          
-          if (error.error) {
-            if (typeof error.error === 'string') {
-              try {
-                const errorObj = JSON.parse(error.error);
-                errorMessage = errorObj.error || errorObj.message || JSON.stringify(errorObj);
-              } catch (e) {
-                errorMessage = error.error;
-              }
-            } else if (error.error.error || error.error.message) {
-              errorMessage = error.error.error || error.error.message;
-            } else {
-              errorMessage = JSON.stringify(error.error);
-            }
-          } else if (error.message) {
-            errorMessage = error.message;
-          }
-          
-          alert('Failed to update request: ' + errorMessage);
+          this.error = 'Failed to update request';
         }
       );
     } else {
-      const requestToSave = {
-        name: this.selectedRequest.name.trim(),
-        uri: this.url.trim(),
-        method: this.selectedRequest.method,
-        headers: this.selectedRequest.headers,
-        body: this.selectedRequest.body || '',
-        collectionId: this.selectedCollectionId
-      };
-
-      this.httpService.createRequest(this.selectedCollectionId, requestToSave).subscribe(
-        (response) => {
-          alert('Request saved to collection');
-          this.onRequestSaved.emit(response);
+      if (!this.selectedCollectionId) {
+        this.error = 'Please select a collection first';
+        return;
+      }
+      
+      this.httpService.createRequest(this.selectedCollectionId, this.selectedRequest).subscribe(
+        (savedRequest) => {
+          console.log('Request saved successfully', savedRequest);
+          this.onRequestSaved.emit(savedRequest);
           this.refreshCollectionRequests();
           this.resetForm();
         },
         (error) => {
           console.error('Error saving request:', error);
-          alert('Failed to save request: ' + (error.error?.error || error.message || 'Unknown error'));
+          this.error = 'Failed to save request';
         }
       );
     }
@@ -379,7 +318,7 @@ export class HttpClientComponent implements OnInit {
     this.isEditMode = false;
     this.resetForm();
   }
-
+  
   resetForm() {
     this.selectedRequest = {
       id: null,
@@ -390,20 +329,14 @@ export class HttpClientComponent implements OnInit {
       body: ''
     };
     this.url = '';
+    this.method = 'GET';
     this.headersArray = [];
+    this.error = '';
   }
-
+  
   refreshCollectionRequests() {
-    if (this.selectedCollectionId) {
-      this.httpService.getRequestsByCollection(this.selectedCollectionId).subscribe(
-        (requests) => {
-          const collectionIndex = this.collectionsList.findIndex(c => c.id === this.selectedCollectionId);
-          if (collectionIndex !== -1) {
-            this.collectionsList[collectionIndex].requests = requests;
-          }
-        },
-        (error) => console.error('Error refreshing requests:', error)
-      );
+    if (this.collections) {
+      this.loadCollections();
     }
   }
   
@@ -411,7 +344,7 @@ export class HttpClientComponent implements OnInit {
     const updatedHeaders: Record<string, string> = {};
     for (const header of this.headersArray) {
       if (header.key && header.key.trim() !== '') {
-        updatedHeaders[header.key.trim()] = header.value || '';
+        updatedHeaders[header.key] = header.value || '';
       }
     }
     this.selectedRequest.headers = updatedHeaders;

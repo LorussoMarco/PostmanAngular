@@ -1,7 +1,7 @@
-
-
 <div class="sidebar-container">
   <h3>Collections</h3>
+  
+  <!-- Import button at the bottom -->
   <div class="sidebar-footer">
     <button class="import-button" (click)="triggerFileInput()">
       <img src="assets/images/file-import.png" alt="Import" class="icon-image">
@@ -9,24 +9,12 @@
     </button>
     <input type="file" (change)="importCollection($event)" style="display: none;" accept=".json">
   </div>
+  <!-- Search input first -->
   <div class="search-container" *ngIf="showSearch">
     <input type="text" placeholder="Cerca richieste..." [(ngModel)]="searchTerm" class="search-input">
   </div>
 
-
-<div class="sidebar-container">
-  <h3>Collections</h3>
-  <div class="sidebar-footer">
-    <button class="import-button" (click)="triggerFileInput()">
-      <img src="assets/images/file-import.png" alt="Import" class="icon-image">
-      <span>Import</span>
-    </button>
-    <input type="file" (change)="importCollection($event)" style="display: none;" accept=".json">
-  </div>
-  <div class="search-container" *ngIf="showSearch">
-    <input type="text" placeholder="Cerca richieste..." [(ngModel)]="searchTerm" class="search-input">
-  </div>
-
+  <!-- Collections container -->
   <div class="collections-container">
     <div *ngFor="let collection of collections" class="collection-item">
       <div class="collection-header" (click)="loadRequests(collection.id)">
