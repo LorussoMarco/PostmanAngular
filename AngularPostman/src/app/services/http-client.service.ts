@@ -81,12 +81,20 @@ export class HttpClientService {
   }
   
   fetchRequest(url: string, method: string, body: any = null, headers: any = {}): Observable<any> {
+    // Imposta le opzioni di default
     const httpOptions = {
       headers: new HttpHeaders(headers),
       observe: 'response' as 'body',
-      responseType: 'blob' as 'json',
+      responseType: 'blob' as 'json',  // Usiamo 'blob' come tipo di risposta
       params: new HttpParams().set('apiKey', this.apiKey) 
     };
+
+    console.log('Sending request with options:', {
+      url,
+      method,
+      headers: Object.fromEntries(new HttpHeaders(headers).keys().map(key => [key, headers[key]])),
+      body
+    });
 
     switch (method.toUpperCase()) {
       case 'GET':

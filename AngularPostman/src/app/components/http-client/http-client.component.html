@@ -18,6 +18,15 @@
       </select>
     </div>
     
+    <!-- Collection Selection -->
+    <div class="collection-section" *ngIf="collections">
+      <h3>Collection</h3>
+      <select [(ngModel)]="selectedCollectionId" class="collection-select">
+        <option [ngValue]="null">Select a collection</option>
+        <option *ngFor="let collection of collectionsList" [value]="collection.id">{{ collection.name }}</option>
+      </select>
+    </div>
+    
     <div class="request-section">
       <select [(ngModel)]="method" class="method-select" [ngClass]="method.toLowerCase()">
         <option value="GET" class="get-option">GET</option>
@@ -107,10 +116,21 @@
           </div>
         </div>
       
+        <!-- PDF -->
+        <div *ngIf="responseType.includes('application/pdf')" class="pdf-container">
+          <iframe *ngIf="safePdfUrl" [src]="safePdfUrl" class="pdf-preview" 
+                  frameborder="0" allowfullscreen></iframe>
+          
+          <div *ngIf="!safePdfUrl" class="pdf-fallback">
+            <p>Per visualizzare il PDF, <a [href]="responseData" target="_blank">clicca qui per aprire in una nuova finestra</a></p>
+          </div>
+        </div>
+      
         <!-- Images -->
         <img *ngIf="responseType.includes('image')" [src]="responseData" class="image-preview" />
       
         <!-- Plain text -->
+        <pre *ngIf="!responseType.includes('application/json') && !responseType.includes('text/html') && !responseType.includes('image') && !responseType.includes('application/pdf')">
         <pre *ngIf="!responseType.includes('application/json') && !responseType.includes('text/html') && !responseType.includes('image') && !responseType.includes('application/pdf')">
           {{ responseData }}
         </pre>

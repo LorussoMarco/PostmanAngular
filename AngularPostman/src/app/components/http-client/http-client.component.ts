@@ -27,8 +27,12 @@ export class HttpClientComponent implements OnInit {
   collectionsList: any[] = [];
   selectedCollectionId: number | null = null;
   isEditMode: boolean = false;
+  selectedCollectionId: number | null = null;
+  isEditMode: boolean = false;
   
   selectedRequest: any = {
+    id: null,
+    name: 'New Request',
     id: null,
     name: 'New Request',
     uri: '',
@@ -124,6 +128,7 @@ export class HttpClientComponent implements OnInit {
       this.loadCollections();
     }
     this.updateHeadersArray();
+    this.updateHeadersArray();
   }
 
   loadCollections() {
@@ -146,6 +151,10 @@ export class HttpClientComponent implements OnInit {
 
     const startTime = performance.now();
     let headers = new Headers();
+    for (const header of this.headersArray) {
+      if (header.key && header.key.trim() !== '') {
+        headers.append(header.key, header.value || '');
+      }
     for (const header of this.headersArray) {
       if (header.key && header.key.trim() !== '') {
         headers.append(header.key, header.value || '');
@@ -236,6 +245,7 @@ export class HttpClientComponent implements OnInit {
     this.responseStatus = `${error.status} ${error.statusText}`;
     this.responseTime = 0;
     this.responseSize = 0;
+    this.safePdfUrl = null;
     this.safePdfUrl = null;
     
     this.emitResponseClick({
