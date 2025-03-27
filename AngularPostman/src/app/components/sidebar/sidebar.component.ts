@@ -15,8 +15,8 @@ export class SidebarComponent implements OnInit {
   @Input() showSearch: boolean = true;
   searchTerm: string = '';
   expandedCollections: Record<number, boolean> = {}; 
-  menuOpenCollectionId: number | null = null;
   @Output() requestSelected = new EventEmitter<any>();
+  @Output() newRequestRequested = new EventEmitter<number>();
 
   constructor(private httpService: HttpClientService) {}
 
@@ -32,9 +32,25 @@ export class SidebarComponent implements OnInit {
     );
   }
 
-  toggleMenu(collectionId: number, event: Event) {
+  addNewRequest(collectionId: number, event: Event) {
     event.stopPropagation();
-    this.menuOpenCollectionId = this.menuOpenCollectionId === collectionId ? null : collectionId;
+    
+    // Ensure the collection is expanded to show the new request when created
+    this.expandedCollections[collectionId] = true;
+    
+    // Create an empty request template with collectionId
+    const emptyRequest = {
+      id: null, // null ID indicates this is a new request
+      name: 'New Request',
+      method: 'GET',
+      uri: '',
+      headers: {},
+      body: '',
+      collectionId: collectionId
+    };
+
+    // Emit this request to be handled by the http-client component
+    this.requestSelected.emit(emptyRequest);
   }
 
   triggerFileInput() {
@@ -151,8 +167,12 @@ export class SidebarComponent implements OnInit {
     );
   }
 
-  selectRequest(request: any) {
-    this.requestSelected.emit(request);
+  selectRequest(request: any, collectionId: number) {
+    const requestWithCollection = { 
+      ...request, 
+      collectionId 
+    };
+    this.requestSelected.emit(requestWithCollection);
   }
 
   private generateUUID(): string {

@@ -16,7 +16,6 @@ export class AppComponent {
 
   handleResponseMessageClick(response: any) {
     this.responseDetails = response;
-    // In a real application, you might show a modal or other UI element
     console.log('Response clicked:', response);
   }
 }

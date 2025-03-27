@@ -1,15 +1,52 @@
-<div class="app-container">
-  <h1 class="app-title">{{ title }}</h1>
+<div class="demo-page">
+  <header class="main-header">
+    <h1 class="main-title">HttpClient Component Demo</h1>
+    <p class="description">Questa pagina dimostra diverse configurazioni del componente HttpClient</p>
+  </header>
 
-  <!-- Use the new HttpClient component -->
-  <app-http-client 
-    url="https://supsi-ticket.cloudns.org/supsi-http-client/bff"
-    [search]="true"
-    [collections]="true"
-    (onResponseMessageClick)="handleResponseMessageClick($event)">
-  </app-http-client>
+  <div class="demo-section">
+    <div class="section-header">
+      <h2>Configurazione #1: Completa (search & collections)</h2>
+      <p>Questa configurazione mostra il componente con tutte le funzionalità abilitate.</p>
+    </div>
+    <div class="app-container">
+      <app-http-client 
+        [search]="true"
+        [collections]="true"
+        (onResponseMessageClick)="handleResponseMessageClick($event)">
+      </app-http-client>
+    </div>
+  </div>
 
-  <!-- Response Details Display -->
+  <div class="demo-section">
+    <div class="section-header">
+      <h2>Configurazione #2: Solo Collections (no search)</h2>
+      <p>Questa configurazione mostra il componente con le collezioni abilitate ma senza funzionalità di ricerca.</p>
+    </div>
+    <div class="app-container">
+      <app-http-client 
+        [search]="false"
+        [collections]="true"
+        (onResponseMessageClick)="handleResponseMessageClick($event)">
+      </app-http-client>
+    </div>
+  </div>
+
+  <div class="demo-section">
+    <div class="section-header">
+      <h2>Configurazione #3: Solo Search (no collections)</h2>
+      <p>Questa configurazione mostra il componente con la ricerca abilitata ma senza gestione delle collezioni.</p>
+    </div>
+    <div class="app-container">
+      <app-http-client 
+        [search]="true"
+        [collections]="false"
+        (onResponseMessageClick)="handleResponseMessageClick($event)">
+      </app-http-client>
+    </div>
+  </div>
+
+  <!-- Response Details Modal (condiviso tra tutte le istanze) -->
   <div *ngIf="responseDetails" class="response-details-overlay">
     <div class="response-details-modal">
       <h2>Response Details</h2>

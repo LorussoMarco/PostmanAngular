@@ -1,38 +1,46 @@
-<div class="sidebar">
-  <h2 class="sidebar-title">Collections</h2>
 
-  <button (click)="triggerFileInput()">Import</button>
-  <input type="file" (change)="importCollection($event)" style="display: none;">
-  
-  <input *ngIf="showSearch" type="text" class="search-bar" placeholder="Search requests..." [(ngModel)]="searchTerm">
 
-  <ul class="sidebar-list">
-    <li *ngFor="let collection of collections">
-      <div class="collection-header">
-        <span (click)="loadRequests(collection.id)">
-          {{ collection.name }}
-          <span class="caret" [class.rotate]="expandedCollections[collection.id]">▲</span>
-        </span>
+<div class="sidebar-container">
+  <h3>Collections</h3>
+  <div class="sidebar-footer">
+    <button class="import-button" (click)="triggerFileInput()">
+      <img src="assets/images/file-import.png" alt="Import" class="icon-image">
+      <span>Import</span>
+    </button>
+    <input type="file" (change)="importCollection($event)" style="display: none;" accept=".json">
+  </div>
+  <div class="search-container" *ngIf="showSearch">
+    <input type="text" placeholder="Cerca richieste..." [(ngModel)]="searchTerm" class="search-input">
+  </div>
 
-        <div class="menu-container">
-          <button class="menu-button" (click)="toggleMenu(collection.id, $event)">⋮</button>
-          <div class="menu-dropdown" *ngIf="menuOpenCollectionId === collection.id">
-            <button (click)="exportCollection(collection.id)">Export</button>
-          </div>
+  <div class="collections-container">
+    <div *ngFor="let collection of collections" class="collection-item">
+      <div class="collection-header" (click)="loadRequests(collection.id)">
+        <span class="collection-name">{{ collection.name }}</span>
+        <div class="collection-actions">
+          <!-- Pulsante per esportare la collezione -->
+          <button class="export-button" (click)="exportCollection(collection.id); $event.stopPropagation()">
+            <img src="assets/images/export.png" alt="Export" class="icon-image">
+          </button>
+          
+          <!-- Pulsante per aggiungere nuova richiesta -->
+          <button class="add-button" (click)="addNewRequest(collection.id, $event)">+</button>
         </div>
       </div>
-
-      <ul *ngIf="expandedCollections[collection.id]" class="dropdown-list">
-        <li *ngFor="let request of filteredRequests(collection.requests)"
-            class="request-item"
-            (click)="selectRequest(request)">
-          <span class="request-method method-{{ request.method.toLowerCase() }}">
-            {{ request.method }}
-          </span>
-          {{ request.name }}
-          <button class="delete-button" (click)="deleteRequest(request)">🗑️</button>
-        </li>
-      </ul>
-    </li>
-  </ul>
+      
+      <div class="requests-container" *ngIf="expandedCollections[collection.id]">
+        <div *ngFor="let request of filteredRequests(collection.requests)" 
+            class="request-item" 
+            (click)="selectRequest(request, collection.id)">
+          <div class="request-info">
+            <span class="method" [ngClass]="request.method.toLowerCase()">{{ request.method }}</span>
+            <span class="request-name">{{ request.name }}</span>
+          </div>
+          <button class="delete-button" (click)="deleteRequest(request); $event.stopPropagation()">
+            <img src="assets/images/remove.png" alt="Delete" class="icon-image">
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

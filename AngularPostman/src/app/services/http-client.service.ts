@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams  } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { AppConfig } from '../config/app.config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class HttpClientService {
-  private baseUrl = 'https://supsi-ticket.cloudns.org/supsi-http-client/bff';
-  private apiKey = 'lorusso1';
+  private baseUrl = AppConfig.api.baseUrl;
+  private apiKey = AppConfig.api.apiKey;
 
   constructor(private http: HttpClient) {}
 
@@ -27,17 +28,49 @@ export class HttpClientService {
     });
   }
 
+  private transformHeaders(headers: any): {[key: string]: string[]} {
+    const headerArray: {[key: string]: string[]} = {};
+    if (headers) {
+      Object.keys(headers).forEach(key => {
+        if (key && key.trim() !== '') {
+          // Assicurati che il valore sia una stringa e non undefined o null
+          const value = headers[key] || '';
+          headerArray[key] = Array.isArray(value) ? value : [value];
+        }
+      });
+    }
+    return headerArray;
+  }
+
+  private createCleanRequest(request: any, defaultName: string) {
+    return {
+      name: request.name || defaultName,
+      uri: request.uri || '',
+      method: request.method || 'GET',
+      headers: this.transformHeaders(request.headers),
+      body: request.body || ''
+    };
+  }
+
   createRequest(collectionId: number, request: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/collections/${collectionId}/requests`, request, {
+    const cleanRequest = this.createCleanRequest(request, 'New Request');
+    return this.http.post(`${this.baseUrl}/collections/${collectionId}/requests`, cleanRequest, {
       params: { apiKey: this.apiKey },
       headers: new HttpHeaders({ 'Content-Type': 'application/json' })
     });
   }
 
   updateRequest(requestId: string, updatedRequest: any): Observable<any> {
+    // Log della richiesta per debug
+    console.log('updateRequest service called with ID:', requestId);
+    console.log('Request payload:', updatedRequest);
+    
+    // Invia la richiesta senza trasformazioni
     return this.http.put(`${this.baseUrl}/requests/${requestId}`, updatedRequest, {
       params: { apiKey: this.apiKey },
-      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+      headers: new HttpHeaders({ 
+        'Content-Type': 'application/json'
+      })
     });
   }
 
