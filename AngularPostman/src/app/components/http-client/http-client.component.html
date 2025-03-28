@@ -9,15 +9,6 @@
 
   <!-- Main Content -->
   <main class="main-content">
-    <!-- Collection Selection - Only show once -->
-    <div class="collection-section" *ngIf="collections">
-      <h3>Collection</h3>
-      <select [(ngModel)]="selectedCollectionId" class="collection-select">
-        <option [ngValue]="null">Select a collection</option>
-        <option *ngFor="let collection of collectionsList" [value]="collection.id">{{ collection.name }}</option>
-      </select>
-    </div>
-    
     <div class="request-section">
       <select [(ngModel)]="method" class="method-select" [ngClass]="method.toLowerCase()">
         <option value="GET" class="get-option">GET</option>
@@ -30,6 +21,9 @@
         {{ loading ? 'Sending...' : 'Send' }}
       </button>
     </div>
+
+    <!-- Error message display -->
+    <div class="error-message" *ngIf="error">{{ error }}</div>
 
     <!-- Request Name (visibile solo per salvare in collection) -->
     <div class="name-section" *ngIf="selectedCollectionId">

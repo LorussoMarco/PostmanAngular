@@ -17,4 +17,8 @@ export class AppComponent {
     this.responseDetails = response;
     console.log('Response clicked:', response);
   }
+
+  closeResponseDetails() {
+    this.responseDetails = null;
+  }
 }

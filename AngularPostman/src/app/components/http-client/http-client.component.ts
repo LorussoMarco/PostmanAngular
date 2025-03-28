@@ -60,7 +60,7 @@ export class HttpClientComponent implements OnInit {
   }
   
   handleRequestSelection(request: any) {
-    console.log('Original request from server:', request);
+    console.log('Request selected:', request);
     
     this.isEditMode = request.id ? true : false;
     this.selectedRequest = {
@@ -81,6 +81,11 @@ export class HttpClientComponent implements OnInit {
     }
     
     this.updateHeadersArray();
+    
+    // If this is a new request being added via the + button in the sidebar
+    if (!this.isEditMode && request.collectionId) {
+      this.error = ''; // Clear any previous errors
+    }
   }
   
   addHeader() {
@@ -127,9 +132,18 @@ export class HttpClientComponent implements OnInit {
   }
 
   loadCollections() {
+    this.loading = true;
     this.httpService.getCollections().subscribe(
-      (data) => this.collectionsList = data,
-      (error) => console.error('Error loading collections:', error)
+      (data) => {
+        console.log('Collections loaded:', data);
+        this.collectionsList = data;
+        this.loading = false;
+      },
+      (error) => {
+        console.error('Error loading collections:', error);
+        this.error = `Failed to load collections: ${error.status} ${error.statusText}`;
+        this.loading = false;
+      }
     );
   }
 
@@ -240,11 +254,16 @@ export class HttpClientComponent implements OnInit {
   }
 
   private parseRequestBody(): any {
+    if (!this.selectedRequest.body || this.selectedRequest.body.trim() === '') {
+      return null;
+    }
+    
     try {
       return JSON.parse(this.selectedRequest.body);
     } catch (error) {
-      alert('Invalid JSON format in request body.');
-      return {};
+      console.error('Invalid JSON format in request body:', error);
+      // Return the raw body instead of alerting, to avoid blocking the UI
+      return this.selectedRequest.body;
     }
   }
 
@@ -277,38 +296,58 @@ export class HttpClientComponent implements OnInit {
     this.selectedRequest.method = this.method;
     this.syncHeadersToRequest();
     
-    if (this.selectedCollectionId) {
-      this.selectedRequest.collectionId = this.selectedCollectionId;
+    if (!this.selectedCollectionId) {
+      this.error = 'A request must be associated with a collection. Please select a request from the sidebar first.';
+      return;
     }
     
+    // Prepare request data according to API specs
+    const requestToSave = {
+      ...this.selectedRequest,
+      collectionId: this.selectedCollectionId
+    };
+    
+    this.loading = true;
+    
     if (this.isEditMode && this.selectedRequest.id) {
-      this.httpService.updateRequest(this.selectedRequest.id.toString(), this.selectedRequest).subscribe(
+      this.httpService.updateRequest(this.selectedRequest.id.toString(), requestToSave).subscribe(
         (updatedRequest) => {
           console.log('Request updated successfully', updatedRequest);
           this.onRequestSaved.emit(updatedRequest);
           this.refreshCollectionRequests();
+          this.error = '';
+          this.loading = false;
         },
         (error) => {
           console.error('Error updating request:', error);
-          this.error = 'Failed to update request';
+          this.error = `Failed to update request: ${error.status} ${error.statusText}`;
+          if (error.error && typeof error.error === 'object') {
+            console.error('Error details:', error.error);
+          }
+          this.loading = false;
         }
       );
     } else {
-      if (!this.selectedCollectionId) {
-        this.error = 'Please select a collection first';
-        return;
-      }
+      // Log what we're about to send
+      console.log('Saving new request to collection:', this.selectedCollectionId);
+      console.log('Request data:', requestToSave);
       
-      this.httpService.createRequest(this.selectedCollectionId, this.selectedRequest).subscribe(
+      this.httpService.createRequest(this.selectedCollectionId, requestToSave).subscribe(
         (savedRequest) => {
           console.log('Request saved successfully', savedRequest);
           this.onRequestSaved.emit(savedRequest);
           this.refreshCollectionRequests();
           this.resetForm();
+          this.error = '';
+          this.loading = false;
         },
         (error) => {
           console.error('Error saving request:', error);
-          this.error = 'Failed to save request';
+          this.error = `Failed to save request: ${error.status} ${error.statusText}`;
+          if (error.error && typeof error.error === 'object') {
+            console.error('Error details:', error.error);
+          }
+          this.loading = false;
         }
       );
     }
@@ -342,11 +381,16 @@ export class HttpClientComponent implements OnInit {
   
   syncHeadersToRequest() {
     const updatedHeaders: Record<string, string> = {};
+    
     for (const header of this.headersArray) {
       if (header.key && header.key.trim() !== '') {
-        updatedHeaders[header.key] = header.value || '';
+        // Store headers as simple string values
+        // The service will convert them to arrays when sending to the API
+        updatedHeaders[header.key.trim()] = header.value || '';
       }
     }
+    
     this.selectedRequest.headers = updatedHeaders;
+    console.log('Synchronized headers:', this.selectedRequest.headers);
   }
 } 

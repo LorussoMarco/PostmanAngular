@@ -3,73 +3,112 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  max-height: 580px;
   width: 280px;
-  background: linear-gradient(180deg, var(--bg-color), white);
-  border-right: 1px solid var(--border-color);
+  background: linear-gradient(165deg, var(--primary-dark), var(--primary-color));
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
   overflow-y: auto;
+  box-shadow: inset -5px 0 15px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 10;
+  will-change: transform;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.sidebar-header::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right, 
+              transparent, 
+              rgba(255, 255, 255, 0.1), 
+              transparent);
+  transform: translateX(-100%);
+  animation: shimmer 5s infinite; /* Reduce animation frequency for better performance */
 }
 
 h3 {
   padding: 1.25rem 1.5rem;
-  background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
+  background: none;
   color: white;
   margin: 0;
   font-size: 1.125rem;
   font-weight: 600;
   letter-spacing: 0.02em;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .search-container {
   padding: 1rem;
-  border-bottom: 1px solid var(--border-color);
-  background-color: var(--bg-color);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
 .search-input {
   width: 100%;
   padding: 0.75rem 1rem;
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: var(--border-radius-md);
   font-size: 0.9rem;
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.1);
   transition: all var(--transition-normal) ease;
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>');
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>');
   background-repeat: no-repeat;
   background-position: 10px center;
   background-size: 16px;
   padding-left: 2.5rem;
-  color: var(--text-primary);
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .search-input:focus {
   outline: none;
-  border-color: var(--primary-light);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.15);
 }
 
 .search-input::placeholder {
-  color: var(--text-muted);
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .collections-container {
   flex: 1;
   overflow-y: auto;
-  padding: 0.5rem;
+  padding: 0.75rem;
+  background: linear-gradient(165deg, rgba(79, 70, 229, 0.6), rgba(99, 102, 241, 0.8));
 }
 
 .collection-item {
   margin-bottom: 0.75rem;
   border-radius: var(--border-radius-md);
   overflow: hidden;
-  background-color: white;
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--border-color);
-  transition: transform var(--transition-normal) ease, box-shadow var(--transition-normal) ease;
+  background-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  animation: none; /* Remove animation for better performance */
+  backdrop-filter: none; /* Remove for better performance */
+  -webkit-backdrop-filter: none;
 }
 
 .collection-item:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  background-color: rgba(255, 255, 255, 0.12);
 }
 
 .collection-header {
@@ -77,22 +116,23 @@ h3 {
   justify-content: space-between;
   align-items: center;
   padding: 0.875rem 1rem;
-  background-color: var(--hover-bg);
+  background-color: rgba(0, 0, 0, 0.1);
   cursor: pointer;
   border-radius: 4px 4px 0 0;
-  border-bottom: 1px solid var(--border-color);
-  transition: background-color var(--transition-normal) ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all var(--transition-normal) ease;
 }
 
 .collection-header:hover {
-  background-color: var(--active-bg);
+  background-color: rgba(0, 0, 0, 0.15);
 }
 
 .collection-name {
   font-weight: 600;
   flex: 1;
-  color: var(--text-primary);
+  color: white;
   font-size: 0.95rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .collection-actions {
@@ -103,7 +143,8 @@ h3 {
 
 .requests-container {
   padding: 0.5rem;
-  background-color: white;
+  background-color: rgba(0, 0, 0, 0.05);
+  animation: none; /* Remove animation for better performance */
 }
 
 .request-item {
@@ -114,15 +155,15 @@ h3 {
   margin-bottom: 0.375rem;
   border-radius: var(--border-radius-sm);
   cursor: pointer;
-  background-color: var(--bg-color);
-  border: 1px solid var(--border-color);
-  transition: all var(--transition-normal) ease;
+  background-color: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.2s ease; /* Faster transition */
 }
 
 .request-item:hover {
-  background-color: var(--hover-bg);
+  background-color: rgba(255, 255, 255, 0.12);
   transform: translateX(3px);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .request-item:last-child {
@@ -146,8 +187,9 @@ h3 {
   min-width: 48px;
   text-align: center;
   letter-spacing: 0.05em;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   transition: transform var(--transition-fast) ease;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 
 .method:hover {
@@ -155,23 +197,23 @@ h3 {
 }
 
 .get {
-  background-color: var(--get-color);
+  background: linear-gradient(135deg, var(--get-color), var(--get-light));
 }
 
 .post {
-  background-color: var(--post-color);
+  background: linear-gradient(135deg, var(--post-color), var(--post-light));
 }
 
 .put {
-  background-color: var(--put-color);
+  background: linear-gradient(135deg, var(--put-color), var(--put-light));
 }
 
 .delete {
-  background-color: var(--delete-color);
+  background: linear-gradient(135deg, var(--delete-color), var(--delete-light));
 }
 
 .patch {
-  background-color: var(--patch-color);
+  background: linear-gradient(135deg, var(--patch-color), var(--patch-light));
 }
 
 .request-name {
@@ -179,21 +221,21 @@ h3 {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: var(--text-secondary);
+  color: rgba(255, 255, 255, 0.8);
   transition: color var(--transition-normal) ease;
 }
 
 .request-item:hover .request-name {
-  color: var(--text-primary);
+  color: white;
 }
 
 .sidebar-footer {
   padding: 0.75rem;
-  background-color: var(--bg-color);
+  background-color: rgba(0, 0, 0, 0.15);
   display: flex;
   justify-content: center;
   width: 100%;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   margin-top: auto;
 }
 
@@ -202,7 +244,8 @@ h3 {
   height: 14px;
   object-fit: contain;
   opacity: 0.8;
-  transition: opacity var(--transition-normal) ease;
+  transition: all var(--transition-normal) ease;
+  filter: brightness(10);
 }
 
 .import-button {
@@ -211,58 +254,73 @@ h3 {
   justify-content: center;
   gap: 0.5rem;
   padding: 0.5rem 0.75rem;
-  background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
+  background: rgba(255, 255, 255, 0.15);
   color: white;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: var(--border-radius-md);
   cursor: pointer;
   transition: all var(--transition-normal) ease;
-  background-size: 200% auto;
   font-weight: 500;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   font-size: 0.875rem;
   max-width: 150px;
   width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.import-button::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, transparent 25%, rgba(255,255,255,0.1) 50%, transparent 75%);
+  background-size: 200% 200%;
+  animation: shine 5s infinite; /* Reduce animation frequency */
+  pointer-events: none;
 }
 
 .import-button:hover {
-  background-position: right center;
-  box-shadow: var(--shadow-md);
+  background-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
   transform: translateY(-2px);
 }
 
 .import-button:hover .icon-image {
   opacity: 1;
+  transform: scale(1.1);
 }
 
 .add-button {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background-color: var(--secondary-color);
+  background-color: rgba(255, 255, 255, 0.2);
   color: white;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   font-size: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all var(--transition-normal) ease;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .add-button:hover {
-  background-color: var(--secondary-dark);
+  background-color: rgba(255, 255, 255, 0.3);
   transform: scale(1.15);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
 }
 
 .export-button, .delete-button {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background-color: var(--bg-color);
-  border: 1px solid var(--border-color);
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -273,19 +331,39 @@ h3 {
 }
 
 .export-button:hover {
-  background-color: var(--active-bg);
+  background-color: rgba(255, 255, 255, 0.2);
   opacity: 1;
+}
+
+.delete-button {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: rgba(239, 68, 68, 0.7); /* Much higher opacity for visibility */
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-normal) ease;
+  padding: 0;
+  opacity: 1; /* Full opacity */
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Add shadow for depth */
 }
 
 .delete-button:hover {
-  background-color: var(--delete-light);
-  opacity: 1;
+  background-color: #ef4444; /* Solid color on hover */
+  transform: scale(1.15);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
 }
 
-.export-button:hover .icon-image,
-.delete-button:hover .icon-image {
-  opacity: 1;
-  transform: scale(1.1);
+.delete-button::after {
+  content: "×";
+  font-size: 18px;
+  line-height: 1;
 }
 
 @keyframes expandCollapse {
@@ -301,6 +379,54 @@ h3 {
   }
 }
 
-.requests-container {
-  animation: expandCollapse var(--transition-normal) ease;
+/* Custom scrollbar for the sidebar */
+.sidebar-container::-webkit-scrollbar,
+.collections-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-container::-webkit-scrollbar-track,
+.collections-container::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-container::-webkit-scrollbar-thumb,
+.collections-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.sidebar-container::-webkit-scrollbar-thumb:hover,
+.collections-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
+}
+
+.add-collection-button {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background-color: white;
+  color: var(--primary-color);
+  border: none;
+  font-size: 1.2rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-normal) ease;
+  box-shadow: var(--shadow-sm);
+  margin-right: 1.25rem;
+}
+
+.add-collection-button:hover {
+  transform: scale(1.15);
+  box-shadow: var(--shadow-md);
 }

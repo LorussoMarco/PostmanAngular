@@ -19,7 +19,9 @@ export class HttpClientService {
   }
 
   getCollections(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/collections`);
+    return this.http.get(`${this.baseUrl}/collections`, {
+      params: { apiKey: this.apiKey }
+    });
   }
 
   getRequestsByCollection(collectionId: number): Observable<any> {
@@ -43,17 +45,53 @@ export class HttpClientService {
   }
 
   private createCleanRequest(request: any, defaultName: string) {
-    return {
+    // Match the exact format expected by the API based on the documentation
+    const cleanRequest: {
+      name: string;
+      uri: string;
+      method: string;
+      body: string;
+      headers: Record<string, string[]>;
+      collectionId?: number;
+    } = {
       name: request.name || defaultName,
       uri: request.uri || '',
       method: request.method || 'GET',
-      headers: this.transformHeaders(request.headers),
-      body: request.body || ''
+      body: request.body || '',
+      headers: {}
     };
+    
+    // Add collectionId if it exists
+    if (request.collectionId) {
+      cleanRequest.collectionId = request.collectionId;
+    }
+    
+    // Convert headers to match API's expected format (with array values)
+    if (request.headers) {
+      Object.keys(request.headers).forEach(key => {
+        if (key && key.trim() !== '') {
+          const value = request.headers[key] || '';
+          cleanRequest.headers[key] = Array.isArray(value) ? value : [value];
+        }
+      });
+    }
+    
+    console.log('Formatted request payload for API:', cleanRequest);
+    return cleanRequest;
   }
 
   createRequest(collectionId: number, request: any): Observable<any> {
+    console.log('Creating request for collection:', collectionId);
+    console.log('Request data:', request);
+    
     const cleanRequest = this.createCleanRequest(request, 'New Request');
+    
+    // Make sure the collectionId is included in both the URL path and the request body
+    if (!cleanRequest.collectionId) {
+      cleanRequest.collectionId = collectionId;
+    }
+    
+    // The API expects apiKey as a query parameter, not in the body
     return this.http.post(`${this.baseUrl}/collections/${collectionId}/requests`, cleanRequest, {
       params: { apiKey: this.apiKey },
       headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -61,12 +99,13 @@ export class HttpClientService {
   }
 
   updateRequest(requestId: string, updatedRequest: any): Observable<any> {
-    // Log della richiesta per debug
-    console.log('updateRequest service called with ID:', requestId);
+    console.log('Updating request with ID:', requestId);
     console.log('Request payload:', updatedRequest);
     
-    // Invia la richiesta senza trasformazioni
-    return this.http.put(`${this.baseUrl}/requests/${requestId}`, updatedRequest, {
+    const cleanRequest = this.createCleanRequest(updatedRequest, updatedRequest.name || 'Updated Request');
+    
+    // Make sure we're using the correct endpoint
+    return this.http.put(`${this.baseUrl}/requests/${requestId}`, cleanRequest, {
       params: { apiKey: this.apiKey },
       headers: new HttpHeaders({ 
         'Content-Type': 'application/json'
@@ -108,5 +147,12 @@ export class HttpClientService {
       default:
         throw new Error(`Metodo HTTP non supportato: ${method}`);
     }
+  }
+
+  createCollection(collection: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/collections`, collection, {
+      params: { apiKey: this.apiKey },
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+    });
   }
 }

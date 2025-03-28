@@ -47,10 +47,11 @@
   </div>
 
   <!-- Response Details Modal (condiviso tra tutte le istanze) -->
-  <div *ngIf="responseDetails" class="response-details-overlay">
-    <div class="response-details-modal">
-      <h2>Response Details</h2>
-      <button class="close-button" (click)="responseDetails = null">✕</button>
+  <div *ngIf="responseDetails" class="response-details-overlay" (click)="closeResponseDetails()">
+    <div class="response-details-modal" (click)="$event.stopPropagation()">
+      <h2>Response Details
+        <button class="close-button" (click)="closeResponseDetails()">✕</button>
+      </h2>
       
       <div class="details-section">
         <h3>Status</h3>

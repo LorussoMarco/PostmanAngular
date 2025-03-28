@@ -38,6 +38,13 @@ export class SidebarComponent implements OnInit {
     // Ensure the collection is expanded to show the new request when created
     this.expandedCollections[collectionId] = true;
     
+    // Make sure we have the collection loaded
+    const collection = this.collections.find(c => c.id === collectionId);
+    if (!collection) {
+      console.error('Collection not found:', collectionId);
+      return;
+    }
+    
     // Create an empty request template with collectionId
     const emptyRequest = {
       id: null, // null ID indicates this is a new request
@@ -49,6 +56,8 @@ export class SidebarComponent implements OnInit {
       collectionId: collectionId
     };
 
+    console.log('Creating new request for collection:', collection.name, '(ID:', collectionId, ')');
+    
     // Emit this request to be handled by the http-client component
     this.requestSelected.emit(emptyRequest);
   }
@@ -141,18 +150,29 @@ export class SidebarComponent implements OnInit {
   }
 
   loadRequests(collectionId: number) {
+    console.log('Loading requests for collection:', collectionId);
+    
+    // If the collection is not expanded, load the requests
     if (!this.expandedCollections[collectionId]) {
       this.httpService.getRequestsByCollection(collectionId).subscribe(
         (data) => {
+          console.log('Requests loaded:', data);
           const collection = this.collections.find(c => c.id === collectionId);
           if (collection) {
             collection.requests = data;
+            // Expand the collection after loading
+            this.expandedCollections[collectionId] = true;
           }
-          this.expandedCollections[collectionId] = true; 
         },
-        (error) => console.error('Errore nel caricamento delle richieste:', error)
+        (error) => {
+          console.error('Error loading requests:', error);
+          // Still expand the collection even if there was an error
+          // This allows the user to create new requests
+          this.expandedCollections[collectionId] = true;
+        }
       );
     } else {
+      // Toggle the expansion state
       this.expandedCollections[collectionId] = !this.expandedCollections[collectionId]; 
     }
   }
