@@ -27,7 +27,7 @@ export class HttpClientComponent implements OnInit {
   selectedCollectionId: number | null = null;
   isEditMode: boolean = false;
   
-  // Holds the currently selected request object (either new or existing)
+  // Contiene l'oggetto della richiesta selezionata (nuovo o esistente)
   selectedRequest: any = {
     id: null,
     name: 'New Request',
@@ -37,39 +37,36 @@ export class HttpClientComponent implements OnInit {
     body: ''
   };
 
-  // Properties to store the details of the last HTTP response
+  // Proprietà per memorizzare i dettagli dell'ultima risposta HTTP
   responseData: any = null;
   responseStatus: string = '';
   responseTime: number = 0;
   responseSize: number = 0;
   responseType: string = '';
-  safePdfUrl: SafeResourceUrl | null = null; // For safely displaying PDF responses
+  safePdfUrl: SafeResourceUrl | null = null; // Per visualizzare in sicurezza risposte PDF
 
-  // Array representation of headers for easy editing in the template
+  // Rappresentazione array degli header per facilitare la modifica nel template
   headersArray: { key: string, value: string }[] = [];
   
-  // Updates the headersArray based on the selectedRequest.headers object
+  // Aggiorna l'headersArray basandosi sull'oggetto selectedRequest.headers
   updateHeadersArray() {
     this.headersArray = [];
     if (this.selectedRequest && typeof this.selectedRequest.headers === 'object' && this.selectedRequest.headers !== null) {
       for (const key in this.selectedRequest.headers) {
-        // Only add if the key is a direct property and is not empty/whitespace
         if (Object.prototype.hasOwnProperty.call(this.selectedRequest.headers, key) && key && key.trim() !== '') {
           this.headersArray.push({ key, value: this.selectedRequest.headers[key] || '' });
         }
       }
     } else {
-      // Reset headers array if headers object is invalid or null
       this.headersArray = [];
     }
   }
   
-  // Angular lifecycle hook called when any data-bound input properties change
   ngOnChanges() {
     this.updateHeadersArray();
   }
   
-  // Clears all response-related data
+  // Cancella tutti i dati relativi alla risposta
   clearResponseData() {
     this.responseData = null;
     this.responseStatus = '';
@@ -78,19 +75,16 @@ export class HttpClientComponent implements OnInit {
     this.responseType = '';
     this.safePdfUrl = null;
     
-    // If there are any object URLs created for responses, revoke them to avoid memory leaks
     if (this.responseData && typeof this.responseData === 'string' && this.responseData.startsWith('blob:')) {
       URL.revokeObjectURL(this.responseData);
     }
   }
   
-  // Handles the selection of a request from the sidebar component
+  // Gestisce la selezione di una richiesta dalla sidebar
   handleRequestSelection(request: any) {
-    // Clear any previous response data when switching requests
     this.clearResponseData();
     
     this.isEditMode = request.id ? true : false;
-    // Update the selectedRequest object with the data from the sidebar
     this.selectedRequest = {
       id: request.id || null,
       name: request.name || 'New Request',
@@ -101,58 +95,49 @@ export class HttpClientComponent implements OnInit {
       collectionId: request.collectionId
     };
     
-    // Update form fields based on the selected request
     this.url = request.uri || '';
     this.method = request.method || 'GET';
     
-    // Store the collection ID if present
     if (request.collectionId) {
       this.selectedCollectionId = request.collectionId;
     }
     
-    // Refresh the headers array for the template
     this.updateHeadersArray();
     
-    // If this is a new request being added via the sidebar's + button
     if (!this.isEditMode && request.collectionId) {
-      this.error = ''; // Clear any previous errors
+      this.error = '';
     }
   }
   
-  // Adds a new empty row to the headers array for editing
+  // Aggiunge una nuova riga vuota all'array degli header
   addHeader() {
     this.headersArray.push({ key: '', value: '' });
   }
   
-  // Removes a header row from the array and updates the selectedRequest
+  // Rimuove una riga header dall'array e aggiorna selectedRequest
   removeHeader(index: number) {
     if (index < 0 || index >= this.headersArray.length) return;
     
     const headerToRemove = this.headersArray[index];
-    // If the header has a key, remove it from the underlying headers object
     if (headerToRemove.key) {
       const updatedHeaders = { ...this.selectedRequest.headers };
       delete updatedHeaders[headerToRemove.key];
       this.selectedRequest.headers = updatedHeaders;
     }
     
-    // Remove the row from the array used in the template
     this.headersArray.splice(index, 1);
   }
 
   constructor(private httpService: HttpClientService, private sanitizer: DomSanitizer) {}
 
-  // Angular lifecycle hook called once the component is initialized
   ngOnInit() {
-    // Load collections if the collections feature is enabled
     if (this.collections) {
       this.loadCollections();
     }
-    // Initialize the headers array
     this.updateHeadersArray();
   }
 
-  // Loads the list of collections from the service
+  // Carica la lista delle collezioni dal servizio
   loadCollections() {
     this.loading = true;
     this.httpService.getCollections().subscribe(
@@ -168,23 +153,20 @@ export class HttpClientComponent implements OnInit {
     );
   }
 
-  // Sends the configured HTTP request using the service
+  // Invia la richiesta HTTP configurata utilizzando il servizio
   sendRequest() {
     if (!this.url || !this.method) {
       console.error("Invalid URL or Method!");
       return;
     }
 
-    // Clear any previous response data before making a new request
     this.clearResponseData();
 
-    // Update the selectedRequest object with current form values
     this.selectedRequest.uri = this.url;
     this.selectedRequest.method = this.method;
-    this.syncHeadersToRequest(); // Ensure headers object is updated from headersArray
+    this.syncHeadersToRequest();
 
-    const startTime = performance.now(); // For timing the request
-    // Prepare headers for the native Fetch API or HttpClient
+    const startTime = performance.now();
     let headers = new Headers();
     for (const header of this.headersArray) {
       if (header.key && header.key.trim() !== '') {
@@ -194,7 +176,7 @@ export class HttpClientComponent implements OnInit {
 
     let requestObservable;
 
-    // Call the appropriate service method based on the selected HTTP method
+    // Chiama il metodo di servizio appropriato in base al metodo HTTP selezionato
     switch (this.method.toUpperCase()) {
       case 'GET':
         requestObservable = this.httpService.fetchRequest(this.url, 'GET', null, headers);
@@ -215,11 +197,10 @@ export class HttpClientComponent implements OnInit {
 
     this.loading = true;
 
-    // Subscribe to the observable returned by the service
     requestObservable.subscribe(
       (response: any) => {
         this.loading = false;
-        this.handleResponse(response, startTime); // Process successful response
+        this.handleResponse(response, startTime);
         
         // Verifica se è una richiesta POST alla collections API
         if (this.method.toUpperCase() === 'POST' && this.url.includes('/collections/') && this.url.includes('/requests')) {
@@ -229,8 +210,6 @@ export class HttpClientComponent implements OnInit {
           if (collectionsIndex !== -1 && collectionsIndex + 1 < urlParts.length) {
             const collectionId = parseInt(urlParts[collectionsIndex + 1]);
             if (!isNaN(collectionId)) {
-              // Aggiorna la collezione per visualizzare la nuova richiesta
-              console.log('Refreshing collection after POST to collections API');
               this.refreshCollectionRequests();
               
               // Se non c'è una collezione selezionata, imposta quella corrente
@@ -241,27 +220,25 @@ export class HttpClientComponent implements OnInit {
           }
         }
         
-        // Auto-save the request to the collection if a collection is selected
+        // Salva automaticamente la richiesta nella collezione se una collezione è selezionata
         if (this.selectedCollectionId && !this.selectedRequest.id) {
-          // Set a default name for the request if not provided
+          // Imposta un nome predefinito per la richiesta se non fornito
           if (!this.selectedRequest.name || this.selectedRequest.name === 'New Request') {
             this.selectedRequest.name = `${this.method} ${this.url.split('/').pop()}`;
           }
           
-          // Create a copy of the request to save
+          // Crea una copia della richiesta da salvare
           const requestToSave = {
             ...this.selectedRequest,
             collectionId: this.selectedCollectionId
           };
           
-          // Call the service to save the request
+          // Chiama il servizio per salvare la richiesta
           this.httpService.createRequest(this.selectedCollectionId, requestToSave).subscribe(
             (savedRequest) => {
-              // Update the selectedRequest with the saved request's ID
               this.selectedRequest.id = savedRequest.id;
               this.isEditMode = true;
-              this.refreshCollectionRequests(); // Refresh sidebar to show the new request
-              console.log('Request automatically saved to collection', savedRequest);
+              this.refreshCollectionRequests();
             },
             (error) => {
               console.error('Error auto-saving request:', error);
@@ -271,30 +248,29 @@ export class HttpClientComponent implements OnInit {
       },
       (error: any) => {
         this.loading = false;
-        this.handleError(error); // Process error response
+        this.handleError(error);
       }
     );
   }
 
-  // Processes the successful HTTP response
+  // Elabora la risposta HTTP ricevuta
   handleResponse(response: any, startTime: number) {
     const endTime = performance.now();
-    // Store basic response metadata
     this.responseStatus = `${response.status} ${response.statusText}`;
     this.responseTime = Math.round(endTime - startTime);
-    this.responseSize = response.body.size / 1024; // Size in KB
+    this.responseSize = response.body.size / 1024; // Dimensione in KB
   
     const contentType = response.headers.get('Content-Type') || 'text/plain';
     this.responseType = contentType;
   
-    // Handle response body based on Content-Type
+    // Gestisce il corpo della risposta in base al Content-Type
     if (contentType.includes('application/json')) {
       response.body.text().then((text: string) => {
         try {
           this.responseData = JSON.parse(text);
         } catch (e) {
           console.error("Error parsing JSON:", e);
-          this.responseData = text; // Show raw text if JSON parsing fails
+          this.responseData = text;
         }
       });
       this.safePdfUrl = null;
@@ -308,16 +284,15 @@ export class HttpClientComponent implements OnInit {
     } else if (contentType.includes('application/pdf')) {
       const blob = new Blob([response.body], { type: 'application/pdf' });
       const unsafeUrl = URL.createObjectURL(blob);
-      this.responseData = unsafeUrl; // Store the object URL
-      // Sanitize the URL for safe use in an iframe src
+      this.responseData = unsafeUrl;
       this.safePdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(unsafeUrl);
   
     } else if (contentType.includes('image')) {
       const blob = new Blob([response.body], { type: contentType });
-      this.responseData = URL.createObjectURL(blob); // Create object URL for image display
+      this.responseData = URL.createObjectURL(blob);
       this.safePdfUrl = null;
   
-    } else { // Handle as plain text by default
+    } else {
       response.body.text().then((text: string) => {
         this.responseData = text;
       });
@@ -325,7 +300,7 @@ export class HttpClientComponent implements OnInit {
     }
   }
 
-  // Handles HTTP errors
+  // Gestisce gli errori HTTP
   private handleError(error: any) {
     this.responseData = error.error ? JSON.stringify(error.error) : 'Unknown error';
     this.responseStatus = `${error.status} ${error.statusText}`;
@@ -334,61 +309,55 @@ export class HttpClientComponent implements OnInit {
     this.safePdfUrl = null;
   }
 
-  // Parses the request body string into JSON, returns raw string on error
+  // Analizza il corpo della richiesta in JSON, restituisce stringa grezza in caso di errore
   private parseRequestBody(): any {
     if (!this.selectedRequest.body || this.selectedRequest.body.trim() === '') {
-      return null; // Return null if body is empty
+      return null;
     }
     
     try {
       return JSON.parse(this.selectedRequest.body);
     } catch (error) {
       console.error('Invalid JSON format in request body:', error);
-      // Return the raw body if JSON parsing fails, to avoid blocking UI
       return this.selectedRequest.body;
     }
   }
 
-  // Called when the response display area is clicked
+  // Chiamato quando l'area di visualizzazione della risposta viene cliccata
   handleResponseClick() {
-    if (!this.responseData) return; // Do nothing if there's no response data
+    if (!this.responseData) return;
     
-    // Prepare the data object to emit
     this.emitResponseClick({
       status: this.responseStatus,
       time: this.responseTime,
       size: this.responseSize,
       type: this.responseType,
       data: this.responseData,
-      headers: {} // Note: Headers from the actual response are not currently included here
+      headers: {}
     });
   }
 
-  // Emits the response data through the onResponseMessageClick output
+  // Emette i dati della risposta attraverso l'output onResponseMessageClick
   private emitResponseClick(response: any) {
     this.onResponseMessageClick.emit(response);
   }
   
-  // Saves the current request (either creates a new one or updates an existing one)
+  // Salva la richiesta corrente (crea una nuova o aggiorna una esistente)
   saveRequest() {
-    // Validate required fields
     if (!this.selectedRequest.name || !this.url) {
       this.error = 'Name and URL are required';
       return;
     }
     
-    // Update the selectedRequest object with current form values
     this.selectedRequest.uri = this.url;
     this.selectedRequest.method = this.method;
-    this.syncHeadersToRequest(); // Ensure headers are synced from the array
+    this.syncHeadersToRequest();
     
-    // Ensure a collection is associated with the request
     if (!this.selectedCollectionId) {
       this.error = 'A request must be associated with a collection. Please select a request from the sidebar first.';
       return;
     }
     
-    // Prepare the final request object to be sent to the service
     const requestToSave = {
       ...this.selectedRequest,
       collectionId: this.selectedCollectionId
@@ -396,20 +365,18 @@ export class HttpClientComponent implements OnInit {
     
     this.loading = true;
     
-    // Determine whether to update (edit mode) or create
     if (this.isEditMode && this.selectedRequest.id) {
-      // Update existing request
+      // Aggiorna la richiesta esistente
       this.httpService.updateRequest(this.selectedRequest.id.toString(), requestToSave).subscribe(
         (updatedRequest) => {
-          this.onRequestSaved.emit(updatedRequest); // Notify parent about the save
-          this.refreshCollectionRequests(); // Refresh sidebar
-          this.error = ''; // Clear errors
+          this.onRequestSaved.emit(updatedRequest);
+          this.refreshCollectionRequests();
+          this.error = '';
           this.loading = false;
         },
         (error) => {
           console.error('Error updating request:', error);
           this.error = `Failed to update request: ${error.status} ${error.statusText}`;
-          // Log detailed error if available
           if (error.error && typeof error.error === 'object') {
             console.error('Error details:', error.error);
           }
@@ -417,19 +384,18 @@ export class HttpClientComponent implements OnInit {
         }
       );
     } else {
-      // Create new request
+      // Crea una nuova richiesta
       this.httpService.createRequest(this.selectedCollectionId, requestToSave).subscribe(
         (savedRequest) => {
-          this.onRequestSaved.emit(savedRequest); // Notify parent
-          this.refreshCollectionRequests(); // Refresh sidebar
-          this.resetForm(); // Reset form after successful creation
-          this.error = ''; // Clear errors
+          this.onRequestSaved.emit(savedRequest);
+          this.refreshCollectionRequests();
+          this.resetForm();
+          this.error = '';
           this.loading = false;
         },
         (error) => {
           console.error('Error saving request:', error);
           this.error = `Failed to save request: ${error.status} ${error.statusText}`;
-          // Log detailed error if available
           if (error.error && typeof error.error === 'object') {
             console.error('Error details:', error.error);
           }
@@ -439,15 +405,14 @@ export class HttpClientComponent implements OnInit {
     }
   }
 
-  // Cancels the edit mode and resets the form
+  // Annulla la modalità di modifica e resetta il form
   cancelEdit() {
     this.isEditMode = false;
     this.resetForm();
-    // Also clear response data when cancelling an edit
     this.clearResponseData();
   }
   
-  // Resets the form fields and selected request to default state
+  // Resetta i campi del form e la richiesta selezionata allo stato predefinito
   resetForm() {
     this.selectedRequest = {
       id: null,
@@ -463,21 +428,19 @@ export class HttpClientComponent implements OnInit {
     this.error = '';
   }
   
-  // Reloads the collections list (used to refresh sidebar after save/update)
+  // Ricarica la lista delle collezioni (usata per aggiornare la sidebar dopo salvataggio/aggiornamento)
   refreshCollectionRequests() {
     if (this.collections) {
       this.loadCollections();
     }
   }
   
-  // Synchronizes the headersArray (used in template) back to the selectedRequest.headers object
+  // Sincronizza l'headersArray con l'oggetto selectedRequest.headers
   syncHeadersToRequest() {
     const updatedHeaders: Record<string, string> = {};
     
     for (const header of this.headersArray) {
       if (header.key && header.key.trim() !== '') {
-        // Store headers as simple key-value strings in the component state
-        // The HttpClientService will handle converting values to arrays for the API
         updatedHeaders[header.key.trim()] = header.value || '';
       }
     }
