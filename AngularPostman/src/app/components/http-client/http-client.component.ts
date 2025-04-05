@@ -69,8 +69,26 @@ export class HttpClientComponent implements OnInit {
     this.updateHeadersArray();
   }
   
+  // Clears all response-related data
+  clearResponseData() {
+    this.responseData = null;
+    this.responseStatus = '';
+    this.responseTime = 0;
+    this.responseSize = 0;
+    this.responseType = '';
+    this.safePdfUrl = null;
+    
+    // If there are any object URLs created for responses, revoke them to avoid memory leaks
+    if (this.responseData && typeof this.responseData === 'string' && this.responseData.startsWith('blob:')) {
+      URL.revokeObjectURL(this.responseData);
+    }
+  }
+  
   // Handles the selection of a request from the sidebar component
   handleRequestSelection(request: any) {
+    // Clear any previous response data when switching requests
+    this.clearResponseData();
+    
     this.isEditMode = request.id ? true : false;
     // Update the selectedRequest object with the data from the sidebar
     this.selectedRequest = {
@@ -156,6 +174,9 @@ export class HttpClientComponent implements OnInit {
       console.error("Invalid URL or Method!");
       return;
     }
+
+    // Clear any previous response data before making a new request
+    this.clearResponseData();
 
     // Update the selectedRequest object with current form values
     this.selectedRequest.uri = this.url;
@@ -374,6 +395,8 @@ export class HttpClientComponent implements OnInit {
   cancelEdit() {
     this.isEditMode = false;
     this.resetForm();
+    // Also clear response data when cancelling an edit
+    this.clearResponseData();
   }
   
   // Resets the form fields and selected request to default state

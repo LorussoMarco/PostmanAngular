@@ -45,45 +45,39 @@
       </app-http-client>
     </div>
   </div>
+</div>
 
-  <!-- Response Details Modal (condiviso tra tutte le istanze) -->
-  <div *ngIf="responseDetails" class="response-details-overlay" (click)="closeResponseDetails()">
-    <div class="response-details-modal" (click)="$event.stopPropagation()">
-      <h2>Response Details
-        <button class="close-button" (click)="closeResponseDetails()">✕</button>
-      </h2>
-      
-      <div class="details-section">
-        <h3>Status</h3>
-        <p>{{ responseDetails.status }}</p>
-      </div>
-
-      <div class="details-section">
-        <h3>Response Time</h3>
-        <p>{{ responseDetails.time }} ms</p>
-      </div>
-
-      <div class="details-section">
-        <h3>Size</h3>
-        <p>{{ responseDetails.size | number: '1.2-2' }} KB</p>
-      </div>
-
-      <div class="details-section">
-        <h3>Content Type</h3>
-        <p>{{ responseDetails.type }}</p>
-      </div>
-
-      <div class="details-section">
-        <h3>Headers</h3>
-        <div *ngFor="let header of responseDetails.headers | keyvalue">
-          <strong>{{ header.key }}:</strong> {{ header.value }}
-        </div>
-      </div>
-
-      <div class="details-section">
-        <h3>Body</h3>
-        <pre>{{ responseDetails.data | json }}</pre>
-      </div>
+<!-- Response Details Modal - Spostato fuori dal container principale -->
+<div class="response-details-overlay" *ngIf="showResponseDetails" (click)="closeResponseModal()">
+  <div class="response-details-modal" (click)="stopPropagation($event)">
+    <h2>
+      Response Details
+      <button class="close-button" (click)="closeResponseModal()">&times;</button>
+    </h2>
+    
+    <div class="details-section">
+      <h3>Status</h3>
+      <p>{{ currentResponse?.status }}</p>
+    </div>
+    
+    <div class="details-section">
+      <h3>Response Time</h3>
+      <p>{{ currentResponse?.time }} ms</p>
+    </div>
+    
+    <div class="details-section" *ngIf="currentResponse?.type">
+      <h3>Content Type</h3>
+      <p>{{ currentResponse?.type }}</p>
+    </div>
+    
+    <div class="details-section" *ngIf="currentResponse?.size">
+      <h3>Size</h3>
+      <p>{{ currentResponse?.size | number:'1.2-2' }} KB</p>
+    </div>
+    
+    <div class="details-section">
+      <h3>Response Data</h3>
+      <pre>{{ currentResponse?.data | json }}</pre>
     </div>
   </div>
 </div>

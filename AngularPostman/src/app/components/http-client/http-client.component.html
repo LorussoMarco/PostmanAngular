@@ -75,8 +75,8 @@
       <button *ngIf="isEditMode" class="cancel-button" (click)="cancelEdit()">Cancel</button>
     </div>
 
-    <!-- Response Section - Clickable to trigger event -->
-    <div class="response-section" (click)="handleResponseClick()">
+    <!-- Response Section - Mostrata solo se ci sono dati di risposta -->
+    <div class="response-section" (click)="handleResponseClick()" *ngIf="responseData !== null">
       <h3>Response <small>(click to view details)</small></h3>
       <div class="response-meta">
         <span class="status">Status: {{ responseStatus }}</span>

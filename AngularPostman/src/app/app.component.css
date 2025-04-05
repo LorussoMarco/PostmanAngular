@@ -342,23 +342,25 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.75); /* Sfondo più scuro per aumentare visibilità */
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  display: flex;
+  display: flex !important; /* Forza il display flex */
   align-items: center;
   justify-content: center;
-  z-index: 1000; /* Increase z-index to ensure it's on top */
+  z-index: 999999 !important; /* z-index estremamente alto */
   padding: 2rem;
   animation: fadeIn 0.3s ease;
   will-change: opacity;
   cursor: pointer; /* Make overlay clickable to close */
+  overscroll-behavior: contain; /* Prevent scrolling of background content */
+  transform: translateZ(0); /* Force hardware acceleration */
 }
 
 .response-details-modal {
   background: white;
   border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-xl);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
   width: 100%;
   max-width: 800px;
   max-height: 90vh;
@@ -371,6 +373,16 @@
   cursor: auto; /* Reset cursor for the modal itself */
 }
 
+/* Assicura che il modale sia visibile in tutti i contesti */
+body .response-details-overlay,
+.demo-section .response-details-overlay,
+.app-container ~ .response-details-overlay {
+  position: fixed;
+  display: flex !important;
+  z-index: 999999 !important;
+}
+
+/* Animazione per l'apertura del modale */
 @keyframes zoomIn {
   from {
     opacity: 0;
@@ -382,6 +394,7 @@
   }
 }
 
+/* Garantisce che il modale sia sempre in cima */
 .response-details-modal h2 {
   margin: 0;
   padding: 1.5rem;
@@ -458,6 +471,18 @@
   line-height: 1.5;
   color: var(--text-primary);
   border: 1px solid var(--border-color);
+}
+
+/* Modal open state - prevents background scrolling */
+:host-context(body.modal-open) {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}
+
+.modal-open {
+  overflow: hidden !important;
 }
 
 /* Responsive Media Queries */
