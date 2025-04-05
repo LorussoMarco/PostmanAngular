@@ -220,6 +220,54 @@ export class HttpClientComponent implements OnInit {
       (response: any) => {
         this.loading = false;
         this.handleResponse(response, startTime); // Process successful response
+        
+        // Verifica se è una richiesta POST alla collections API
+        if (this.method.toUpperCase() === 'POST' && this.url.includes('/collections/') && this.url.includes('/requests')) {
+          // Ottieni l'ID della collezione dall'URL
+          const urlParts = this.url.split('/');
+          const collectionsIndex = urlParts.findIndex(part => part === 'collections');
+          if (collectionsIndex !== -1 && collectionsIndex + 1 < urlParts.length) {
+            const collectionId = parseInt(urlParts[collectionsIndex + 1]);
+            if (!isNaN(collectionId)) {
+              // Aggiorna la collezione per visualizzare la nuova richiesta
+              console.log('Refreshing collection after POST to collections API');
+              this.refreshCollectionRequests();
+              
+              // Se non c'è una collezione selezionata, imposta quella corrente
+              if (!this.selectedCollectionId) {
+                this.selectedCollectionId = collectionId;
+              }
+            }
+          }
+        }
+        
+        // Auto-save the request to the collection if a collection is selected
+        if (this.selectedCollectionId && !this.selectedRequest.id) {
+          // Set a default name for the request if not provided
+          if (!this.selectedRequest.name || this.selectedRequest.name === 'New Request') {
+            this.selectedRequest.name = `${this.method} ${this.url.split('/').pop()}`;
+          }
+          
+          // Create a copy of the request to save
+          const requestToSave = {
+            ...this.selectedRequest,
+            collectionId: this.selectedCollectionId
+          };
+          
+          // Call the service to save the request
+          this.httpService.createRequest(this.selectedCollectionId, requestToSave).subscribe(
+            (savedRequest) => {
+              // Update the selectedRequest with the saved request's ID
+              this.selectedRequest.id = savedRequest.id;
+              this.isEditMode = true;
+              this.refreshCollectionRequests(); // Refresh sidebar to show the new request
+              console.log('Request automatically saved to collection', savedRequest);
+            },
+            (error) => {
+              console.error('Error auto-saving request:', error);
+            }
+          );
+        }
       },
       (error: any) => {
         this.loading = false;
