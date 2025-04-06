@@ -25,7 +25,6 @@ export class HttpClientService {
   }
 
   private createCleanRequest(request: any, defaultName: string) {
-    // Ensures the request object matches the format expected by the API
     const cleanRequest: {
       name: string;
       uri: string;
@@ -63,12 +62,10 @@ export class HttpClientService {
   createRequest(collectionId: number, request: any): Observable<any> {
     const cleanRequest = this.createCleanRequest(request, 'New Request');
     
-    // Ensure collectionId is included, as required by the API endpoint structure
     if (!cleanRequest.collectionId) {
       cleanRequest.collectionId = collectionId;
     }
     
-    // API expects apiKey as a query parameter, not in the request body
     return this.http.post(`${this.baseUrl}/collections/${collectionId}/requests`, cleanRequest, {
       params: { apiKey: this.apiKey },
       headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -78,7 +75,6 @@ export class HttpClientService {
   updateRequest(requestId: string, updatedRequest: any): Observable<any> {
     const cleanRequest = this.createCleanRequest(updatedRequest, updatedRequest.name || 'Updated Request');
     
-    // Ensure the correct endpoint is used for updating a specific request
     return this.http.put(`${this.baseUrl}/requests/${requestId}`, cleanRequest, {
       params: { apiKey: this.apiKey },
       headers: new HttpHeaders({ 
@@ -94,12 +90,11 @@ export class HttpClientService {
   }
   
   fetchRequest(url: string, method: string, body: any = null, headers: any = {}): Observable<any> {
-    // Set default HTTP options for the fetch request
     const httpOptions = {
       headers: new HttpHeaders(headers),
-      observe: 'response' as 'body', // Observe the full response
-      responseType: 'blob' as 'json',  // Expect a blob response type initially
-      params: new HttpParams().set('apiKey', this.apiKey) // Include apiKey in query parameters
+      observe: 'response' as 'body', 
+      responseType: 'blob' as 'json',  
+      params: new HttpParams().set('apiKey', this.apiKey) 
     };
 
     switch (method.toUpperCase()) {
@@ -112,7 +107,6 @@ export class HttpClientService {
       case 'DELETE':
         return this.http.delete(url, httpOptions);
       default:
-        // Throw an error for unsupported HTTP methods
         throw new Error(`Unsupported HTTP method: ${method}`);
     }
   }

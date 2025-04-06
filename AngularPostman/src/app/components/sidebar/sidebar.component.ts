@@ -33,12 +33,9 @@ export class SidebarComponent implements OnInit {
   }
 
   addNewRequest(collectionId: number, event: Event) {
-    event.stopPropagation(); // Prevent triggering other click events (like collection expansion)
-    
-    // Ensure the collection is expanded to show the new request visually when created
+    event.stopPropagation();     
     this.expandedCollections[collectionId] = true;
     
-    // Find the target collection
     const collection = this.collections.find(c => c.id === collectionId);
     if (!collection) {
       console.error('Collection not found:', collectionId);
@@ -47,7 +44,7 @@ export class SidebarComponent implements OnInit {
     
     // Create an empty request template associated with the collection
     const emptyRequest = {
-      id: null, // Null ID signifies a new, unsaved request
+      id: null, 
       name: 'New Request',
       method: 'GET',
       uri: '',
@@ -61,7 +58,6 @@ export class SidebarComponent implements OnInit {
   }
 
   triggerFileInput() {
-    // Programmatically click the hidden file input for importing collections
     const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
     fileInput?.click();
   }
@@ -133,11 +129,10 @@ export class SidebarComponent implements OnInit {
         name: request.name,
         request: {
           method: request.method,
-          header: request.headers || [], // Ensure headers is an array or object
+          header: request.headers || [],
           url: request.uri
-          // Note: Body is not included in this basic export example
         },
-        response: [] // Empty responses array as per schema
+        response: [] 
       }))
     };
 
@@ -166,8 +161,6 @@ export class SidebarComponent implements OnInit {
         },
         (error) => {
           console.error('Error loading requests:', error);
-          // Still expand the collection UI even if loading requests failed,
-          // allowing the user to potentially add new requests.
           this.expandedCollections[collectionId] = true;
         }
       );
@@ -213,15 +206,15 @@ export class SidebarComponent implements OnInit {
 
   // Helper function to trigger a browser download for JSON data
   private downloadJson(data: any, filename: string) {
-    const jsonStr = JSON.stringify(data, null, 2); // Pretty print JSON
+    const jsonStr = JSON.stringify(data, null, 2);
     const blob = new Blob([jsonStr], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = filename;
-    document.body.appendChild(a); // Append link to body
-    a.click(); // Programmatically click the link to trigger download
-    document.body.removeChild(a); // Remove the link from the body
-    URL.revokeObjectURL(url); // Clean up the object URL
+    document.body.appendChild(a); 
+    a.click(); 
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url); 
   }
 }

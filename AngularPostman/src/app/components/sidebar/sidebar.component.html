@@ -3,7 +3,6 @@
     <h3>Collections</h3>
   </div>
   
-  <!-- Import button at the bottom -->
   <div class="sidebar-footer">
     <button class="import-button" (click)="triggerFileInput()">
       <img src="assets/images/file-import.png" alt="Import" class="icon-image">
@@ -11,23 +10,19 @@
     </button>
     <input type="file" (change)="importCollection($event)" style="display: none;" accept=".json">
   </div>
-  <!-- Search input at the top -->
   <div class="search-container" *ngIf="showSearch">
     <input type="text" placeholder="Cerca richieste..." [(ngModel)]="searchTerm" class="search-input">
   </div>
 
-  <!-- Collections container in the middle -->
   <div class="collections-container">
     <div *ngFor="let collection of collections" class="collection-item">
       <div class="collection-header" (click)="loadRequests(collection.id)">
         <span class="collection-name">{{ collection.name }}</span>
         <div class="collection-actions">
-          <!-- Pulsante per esportare la collezione -->
           <button class="export-button" (click)="exportCollection(collection.id); $event.stopPropagation()">
             <img src="assets/images/export.png" alt="Export" class="icon-image">
           </button>
           
-          <!-- Pulsante per aggiungere nuova richiesta -->
           <button class="add-button" (click)="addNewRequest(collection.id, $event)">+</button>
         </div>
       </div>

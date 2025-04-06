@@ -7,7 +7,6 @@
     [showSearch]="search">
   </app-sidebar>
 
-  <!-- Main Content -->
   <main class="main-content">
     <div class="request-section">
       <select [(ngModel)]="method" class="method-select" [ngClass]="method.toLowerCase()">
@@ -22,22 +21,18 @@
       </button>
     </div>
 
-    <!-- Error message display -->
     <div class="error-message" *ngIf="error">{{ error }}</div>
 
-    <!-- Request Name (visibile solo per salvare in collection) -->
     <div class="name-section" *ngIf="selectedCollectionId">
       <h3>Request Name</h3>
       <input type="text" class="name-input" placeholder="My Request" [(ngModel)]="selectedRequest.name" />
     </div>
 
-    <!-- Request Body Section -->
     <div class="body-section">
       <h3>Request Body</h3>
       <textarea class="request-body" [(ngModel)]="selectedRequest.body" placeholder="Enter JSON body"></textarea>
     </div>
 
-    <!-- Headers Section -->
     <div class="headers-section">
       <div class="headers-title-container">
         <h3>Headers</h3>
@@ -67,7 +62,6 @@
       </div>
     </div>
 
-    <!-- Action Buttons -->
     <div class="action-buttons" *ngIf="selectedCollectionId">
       <button class="save-button" (click)="saveRequest()">
         {{ isEditMode ? 'Update Request' : 'Save to Collection' }}
@@ -75,7 +69,6 @@
       <button *ngIf="isEditMode" class="cancel-button" (click)="cancelEdit()">Cancel</button>
     </div>
 
-    <!-- Response Section - Mostrata solo se ci sono dati di risposta -->
     <div class="response-section" (click)="handleResponseClick()" *ngIf="responseData !== null">
       <h3>Response <small>(click to view details)</small></h3>
       <div class="response-meta">
