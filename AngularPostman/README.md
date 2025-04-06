@@ -1,6 +1,67 @@
 # AngularPostman
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.1.
+Un'applicazione Angular che simula le funzionalità di Postman, consentendo di effettuare e testare richieste HTTP (GET, POST, PUT, DELETE) verso API REST.
+
+## Panoramica del Progetto
+
+AngularPostman è un'interfaccia utente sviluppata in Angular 19 che permette agli sviluppatori di:
+- Creare e inviare richieste HTTP
+- Visualizzare le risposte delle API
+- Gestire le intestazioni (headers) delle richieste
+- Organizzare le richieste in collezioni
+
+## Componenti Principali
+
+Il progetto è strutturato nei seguenti componenti:
+
+- **Sidebar**: Navigazione laterale per gestire le collezioni di richieste
+- **HTTP Client**: Componente principale per la creazione e l'invio di richieste HTTP
+- **HTTPClientService**: Servizio che gestisce le chiamate HTTP verso le API esterne
+
+## Tecnologie Utilizzate
+
+- Angular 19.2.0
+- RxJS per la gestione delle operazioni asincrone
+- Angular Forms per la gestione dei form
+- Angular Router per la navigazione
+
+## Come iniziare
+
+### Prerequisiti
+
+- Node.js (versione 18.x o superiore)
+- npm (incluso con Node.js)
+- Angular CLI (v19.2.1)
+
+### Installazione
+
+1. Clona il repository:
+```bash
+git clone <repository-url>
+cd AngularPostman
+```
+
+2. Installa le dipendenze:
+```bash
+npm install
+```
+
+### Avvio dell'applicazione
+
+Per avviare il server di sviluppo:
+
+```bash
+ng serve
+```
+
+Vai a `http://localhost:4200/` nel tuo browser per visualizzare l'applicazione.
+
+## Funzionalità
+
+- Creazione di richieste HTTP con vari metodi (GET, POST, PUT, DELETE)
+- Gestione personalizzata delle intestazioni delle richieste
+- Visualizzazione formattata delle risposte JSON
+- Cronologia delle richieste effettuate
 
 ## Development server
 
@@ -11,49 +72,3 @@ ng serve
 ```
 
 Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
